@@ -1,0 +1,20 @@
+<p><%= notice %></p>
+
+<h1>Asset: <%= @asset.name %></h1>
+
+<h2>Balance: <%= @asset.balance %></h2>
+
+<% if @asset.transactions.present? %>
+    <%= display_transactions(@transactions) %>
+<% else %>
+    <p>No transactions found for this asset.</p>
+<% end %>
+
+<%= button_to 'Recalculate Balance', recalculate_balance_asset_path(@asset) %>
+<br>
+<%= link_to 'New Transaction', new_transaction_path(asset: @asset.name) %>
+<br>
+<br>
+<%= link_to 'View Assets', assets_path %>
+<br>
+<%= link_to 'View Transactions', transactions_path %>

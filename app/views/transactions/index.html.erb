@@ -1,0 +1,22 @@
+<p><%= notice %></p>
+
+<h1>Transaction List</h1>
+
+<%= form_with(url: transactions_path, method: :get, local: true) do %>
+    <div>
+        <%= label_tag :asset, 'Search by Asset:' %>
+        <%= text_field_tag :asset, params[:asset] %>
+        <%= submit_tag 'Search' %>
+    </div>
+<% end %>
+
+<%= display_transactions(@transactions) %>
+
+<%= link_to 'New Transaction', new_transaction_path %>
+<br>
+<% if params[:asset].present? %>
+    <br>
+    <%= link_to 'View Transactions', transactions_path %>
+<% end %>
+<br>
+<%= link_to 'View Assets', assets_path %>
