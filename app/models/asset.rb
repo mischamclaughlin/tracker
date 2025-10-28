@@ -1,4 +1,6 @@
 class Asset < ApplicationRecord
+  self.primary_key = 'name'
+
   has_many :transactions, foreign_key: :asset, primary_key: :name
 
   validates :name, presence: true, uniqueness: true
@@ -13,5 +15,9 @@ class Asset < ApplicationRecord
   def recalculate_balance!
     calculated_balance = transactions.sum("CASE WHEN action = 'buy' THEN amount WHEN action = 'sell' THEN -amount ELSE 0 END")
     update_column(:balance, calculated_balance)
+  end
+
+  def to_param
+    name
   end
 end

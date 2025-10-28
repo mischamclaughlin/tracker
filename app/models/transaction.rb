@@ -6,6 +6,7 @@ class Transaction < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :time, presence: true
 
+  before_validation :normalise_attributes
   after_save :update_asset_balance
   before_destroy :reverse_transaction
 
@@ -14,8 +15,8 @@ class Transaction < ApplicationRecord
   def to_s
     balance = Asset.find_by(name: asset)&.balance || 0
     "
-    Asset: #{asset.downcase},
-    Action: #{action.downcase},
+    Asset: #{asset},
+    Action: #{action},
     Amount: #{amount.to_s('F')},
     Balance: #{balance.to_s('F')},
     Time: #{time.strftime('%Y%m%d%H%M')}
@@ -24,10 +25,20 @@ class Transaction < ApplicationRecord
 
   private
 
+  def normalise_attributes
+    self.asset = asset.upcase.strip if asset.present?
+    self.action = action.downcase.strip if action.present?
+    self.memo = memo.strip if memo.present?
+  end
+
   def update_asset_balance
-    reverse_old_transaction if saved_change_to_asset? || saved_change_to_action? || saved_change_to_amount?
+    reverse_old_transaction if previously_persisted? && (saved_change_to_asset? || saved_change_to_action? || saved_change_to_amount?)
 
     apply_transaction
+  end
+
+  def previously_persisted?
+    !saved_change_to_id?
   end
 
   def reverse_old_transaction
