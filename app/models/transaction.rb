@@ -9,6 +9,8 @@ class Transaction < ApplicationRecord
   after_save :update_asset_balance
   before_destroy :reverse_transaction
 
+  scope :search_by_asset, ->(asset_name) { where(asset: asset_name) }
+
   def to_s
     balance = Asset.find_by(name: asset)&.balance || 0
     "
