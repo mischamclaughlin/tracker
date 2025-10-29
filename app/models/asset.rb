@@ -2,6 +2,7 @@ class Asset < ApplicationRecord
   self.primary_key = 'name'
 
   has_many :transactions, foreign_key: :asset, primary_key: :name
+  has_many :prices, foreign_key: :asset, primary_key: :name
 
   validates :name, presence: true, uniqueness: true
   validates :balance, presence: true, numericality: true
@@ -17,7 +18,11 @@ class Asset < ApplicationRecord
     update_column(:balance, calculated_balance)
   end
 
-  def to_param
-    name
+  def current_price
+    prices.order(recorded_at: :desc).first
+  end
+
+  def price_at(time)
+    prices.where('recorded_at <= ?', time).order(recorded_at: :desc).first&.price
   end
 end
