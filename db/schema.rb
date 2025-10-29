@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_24_154736) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_29_080953) do
   create_table "assets", force: :cascade do |t|
     t.string "name"
     t.decimal "balance", precision: 30, scale: 18
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "prices", force: :cascade do |t|
+    t.string "asset"
+    t.decimal "price", precision: 30, scale: 18
+    t.datetime "recorded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
