@@ -1,0 +1,5 @@
+fetch_prices:
+  cron: "*/5 * * * *"
+  class: "FetchPricesJob"
+  queue: default
+

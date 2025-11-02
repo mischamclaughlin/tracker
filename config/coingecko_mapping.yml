@@ -1,0 +1,15 @@
+# https://api.coingecko.com/api/v3/coins/list – link to find coin IDs
+ADA: cardano
+CARDANO: cardano
+
+BTC: bitcoin
+BITCOIN: bitcoin
+
+ETH: ethereum
+ETHEREUM: ethereum
+
+SOL: solana
+SOLANA: solana
+
+XRP: ripple
+RIPPLE: ripple
