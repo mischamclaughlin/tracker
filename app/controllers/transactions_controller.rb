@@ -1,19 +1,18 @@
 class TransactionsController < ApplicationController
+  include SortParamGuard
+
   before_action :set_transaction, only: [:show, :edit, :update, :destroy]
 
   def index
-    if params[:asset]
+    if params[:asset] && !params[:asset].strip.empty?
       normalise_asset = params[:asset].upcase.strip
-      @transactions = Transaction.includes(:asset_record).search_by_asset(normalise_asset).order(asset: :asc, time: :desc)
+      @transactions = Transaction.includes(:asset_record).search_by_asset(normalise_asset).order_by_column(params[:sort_by])
       log_info("Searched transactions by asset: #{normalise_asset}")
     else
-      @transactions = Transaction.includes(:asset_record).all.order(asset: :asc, time: :desc)
+      @transactions = Transaction.includes(:asset_record).order_by_column(params[:sort_by])
       log_info("Fetched all transactions")
+      log_info("Sorted transactions by #{params[:sort_by]}")
     end
-  end
-
-  def show
-    log_info("Viewing transaction with ID #{@transaction.id}")
   end
 
   def new
@@ -26,6 +25,8 @@ class TransactionsController < ApplicationController
 
   def create
     @transaction = Transaction.new(transaction_params)
+    log_info("Transaction Params: #{transaction_params.inspect}")
+
     if @transaction.save
       log_info("Created transaction with ID #{@transaction.id}")
       redirect_to @transaction, notice: 'Transaction was successfully created.', status: :see_other
@@ -33,6 +34,10 @@ class TransactionsController < ApplicationController
       log_error("Failed to create transaction: #{@transaction.errors.full_messages.join(', ')}")
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def show
+    log_info("Viewing transaction with ID #{@transaction.id}")
   end
 
   def edit
@@ -54,7 +59,7 @@ class TransactionsController < ApplicationController
       redirect_to transactions_path, notice: 'Transaction was successfully destroyed.', status: :see_other
     else
       log_error("Failed to delete transaction with ID #{@transaction.id}: #{@transaction.errors.full_messages.join(', ')}")
-      redirect_to transactions_path, alert: 'Transaction could not be deleted.'
+      redirect_to @transaction, alert: 'Transaction could not be deleted.'
     end
   end
 
@@ -68,6 +73,6 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:asset, :action, :time, :memo, :amount)
+    params.require(:transaction).permit(:asset, :action, :time, :memo, :amount, :fiat, :price_at_time)
   end
 end

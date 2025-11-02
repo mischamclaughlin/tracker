@@ -1,9 +1,18 @@
 class AssetsController < ApplicationController
+  include SortParamGuard
+
   before_action :set_asset, only: [:show, :recalculate_balance]
 
   def index
-    @assets = Asset.all.order(balance: :desc)
-    log_info("Fetched all assets")
+    if params[:asset] && !params[:asset].strip.empty?
+      normalise_asset = params[:asset].upcase.strip
+      @assets = Asset.search_by_asset(normalise_asset).order_by_column(params[:sort_by])
+      log_info("Searched assets by name: #{normalise_asset}")
+    else
+      @assets = Asset.all.order_by_column(params[:sort_by])
+      log_info("Fetched all assets")
+      log_info("Sorted assets by #{params[:sort_by]}")
+    end
   end
 
   def show
