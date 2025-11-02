@@ -1,14 +1,12 @@
 <%= form_with(model: @transaction, local: true) do |form| %>
   <% if @transaction.errors.any? %>
-    <div id="error_explanation">
+    <div>
       <h2><%= pluralize(@transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
       <ul>
         <% @transaction.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>
-      <br>
-      <%= link_to 'Back', transactions_path %>
     </div>
   <% end %>
     <div>
@@ -28,10 +26,15 @@
         <%= form.text_field :memo %>
     </div>
     <div>
-        <%= form.label :amount, 'Amount:' %>
+        <%= form.label :amount, 'Coin Amount:' %>
         <%= form.number_field :amount, step: :any %>
     </div>
     <div>
-        <%= form.submit 'Update Transaction' %>
+        <%= form.label :fiat, 'Fiat Amount:' %>
+        <%= form.number_field :fiat, step: :any %>
     </div>
+    <div>
+        <%= form.submit 'Submit Transaction' %>
+    </div>
+    <br>
 <% end %>

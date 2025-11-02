@@ -1,10 +1,22 @@
-<p><%= notice %></p>
+<h1 class="page-title">Assets</h1>
 
-<h1>Assets</h1>
+<%= form_with(url: assets_path, method: :get, local: true) do %>
+    <div class="search-field">
+        <%= label_tag :asset, 'Search by Asset:' %>
+        <%= text_field_tag :asset, params[:asset] %>
+        <%= hidden_field_tag :sort_by, params[:sort_by] %>
+        <%= submit_tag 'Search' %>
+    </div>
+<% end %>
 
-<%= display_assets(@assets) %>
+<div class="sorting-buttons">
+  <p>Sort by:</p>
+  <%= link_to 'Fiat', assets_path(asset: params[:asset], sort_by: 'balance_in_fiat'), class: "btn #{'active' if params[:sort_by] == 'balance_in_fiat'}" %>
+  <%= link_to 'Asset', assets_path(asset: params[:asset], sort_by: 'balance'), class: "btn #{'active' if params[:sort_by] == 'balance'}" %>
+</div>
 
-<%= link_to 'New Transaction', new_transaction_path %>
-<br>
-<br>
-<%= link_to 'View Transactions', transactions_path %>
+<% if @assets.empty? %>
+  <p>No assets found. Add some transactions to get some assets.</p>
+<% else %>
+    <%= display_assets(@assets) %>
+<% end %>

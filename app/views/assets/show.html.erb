@@ -1,20 +1,31 @@
-<p><%= notice %></p>
-
 <h1>Asset: <%= @asset.name %></h1>
 
 <h2>Balance: <%= @asset.balance %></h2>
+<h2>Fiat Balance: <%= number_to_currency(@asset.balance_in_fiat) %></h2>
 
-<% if @asset.transactions.present? %>
-    <%= display_transactions(@transactions) %>
-<% else %>
-    <p>No transactions found for this asset.</p>
-<% end %>
+<div>
+    <hr>
+
+    <h3>Profit & Loss Summary</h3>
+    <p>Average Buy Price: <%= number_to_currency(@asset.avg_buy_price) %></p>
+    <p>Current Price: <%= number_to_currency(@asset.current_price&.price || 0) %></p>
+
+    <hr>
+
+    <p>Unrealised P&L: <%= display_pnl(@asset.unrealised_pnl) %></p>
+    <p>Realised P&L: <%= display_pnl(@asset.realised_pnl) %></p>
+    <p>Total P&L: <%= display_pnl(@asset.total_pnl) %></p>
+
+    <hr>
+
+    <p>Total Brought: <%= @asset.total_bought %></p>
+    <p>Total Sold: <%= @asset.total_sold %></p>
+    
+    <hr>
+</div>
+
+<%= display_transactions(@transactions) %>
 
 <%= button_to 'Recalculate Balance', recalculate_balance_asset_path(@asset) %>
 <br>
-<%= link_to 'New Transaction', new_transaction_path(asset: @asset.name) %>
-<br>
-<br>
-<%= link_to 'View Assets', assets_path %>
-<br>
-<%= link_to 'View Transactions', transactions_path %>
+<%= link_to "New #{@asset.name} Transaction", new_transaction_path(asset: @asset.name) %>
