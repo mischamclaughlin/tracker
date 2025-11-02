@@ -1,0 +1,22 @@
+.navbar {
+    margin-bottom: auto;
+    width: 95%;
+    padding: 0.025rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    background-color: rgba(3, 60, 126, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}

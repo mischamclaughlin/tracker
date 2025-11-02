@@ -1,0 +1,10 @@
+.footer {
+    margin-top: auto;
+    width: 95%;
+    padding: 0.025rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(10px);
+    background-color: rgba(3, 60, 126, 0.5);
+    color: white;
+    text-align: center;
+}

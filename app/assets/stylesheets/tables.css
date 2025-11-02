@@ -1,0 +1,33 @@
+.assets-table, .transactions-table {
+    border-collapse: collapse;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    th, td {
+    padding: 6px 8px;
+    border: 1px solid #444;
+    }
+
+    th {
+    background-color: #333;
+    }
+
+    .numeric {
+    text-align: right;
+    }
+
+    .positive {
+    border-radius: 0.1rem;
+    padding: 0.1rem;
+    background-color: green;
+    }
+
+    .negative {
+    border-radius: 0.1rem;
+    padding: 0.1rem;
+    background-color: red;
+    }
+}

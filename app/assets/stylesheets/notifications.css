@@ -1,0 +1,21 @@
+.alert {
+    width: 90%;
+    padding: 0.5rem;
+    color: white;
+    background-color: red;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+    transition: all 1s ease;
+}
+
+.notice {
+    width: 90%;
+    padding: 0.5rem;
+    color: white;
+    background-color: green;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+    transition: all 1s ease;
+}
