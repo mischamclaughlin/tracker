@@ -1,0 +1,21 @@
+.new-transaction-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.form-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    width: 100%;
+}
+
+.form-btn {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}

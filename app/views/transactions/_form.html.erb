@@ -1,40 +1,42 @@
 <%= form_with(model: @transaction, local: true) do |form| %>
-  <% if @transaction.errors.any? %>
-    <div>
-      <h2><%= pluralize(@transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
-      <ul>
-        <% @transaction.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-    <div>
-        <%= form.label :asset, 'Asset:' %>
-        <%= form.text_field :asset %>
-    </div>
-    <div>
-        <%= form.label :action, 'Action:' %>
-        <%= form.select :action, options_for_select([['Buy', 'buy'], ['Sell', 'sell']], @transaction.action) %>
-    </div>
-    <div>
-        <%= form.label :time, 'Time:' %>
-        <%= form.datetime_select :time %>
-    </div>
-    <div>
-        <%= form.label :memo, 'Memo:' %>
-        <%= form.text_field :memo %>
-    </div>
-    <div>
-        <%= form.label :amount, 'Coin Amount:' %>
-        <%= form.number_field :amount, step: :any %>
-    </div>
-    <div>
-        <%= form.label :fiat, 'Fiat Amount:' %>
-        <%= form.number_field :fiat, step: :any %>
-    </div>
-    <div>
-        <%= form.submit 'Submit Transaction' %>
-    </div>
-    <br>
+  <div class='new-transaction-form'>
+      <% if @transaction.errors.any? %>
+        <div>
+          <h2><%= pluralize(@transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
+          <ul>
+            <% @transaction.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+        <div class="form-section">
+            <%= form.label :asset, 'Asset:' %>
+            <%= form.text_field :asset %>
+        </div>
+        <div class="form-section">
+            <%= form.label :action, 'Action:' %>
+            <%= form.select :action, options_for_select([['Buy', 'buy'], ['Sell', 'sell']], @transaction.action) %>
+        </div>
+        <div class="form-section">
+            <%= form.label :time, 'Time:' %>
+            <%= form.datetime_select :time %>
+        </div>
+        <div class="form-section">
+            <%= form.label :memo, 'Memo:' %>
+            <%= form.text_field :memo %>
+        </div>
+        <div class="form-section">
+            <%= form.label :amount, 'Coin Amount:' %>
+            <%= form.number_field :amount, step: :any %>
+        </div>
+        <div class="form-section">
+            <%= form.label :fiat, 'Fiat Amount:' %>
+            <%= form.number_field :fiat, step: :any %>
+        </div>
+        <div class="form-section form-btn">
+            <%= form.submit 'Submit Transaction', class: "btn" %>
+        </div>
+        <br>
+  </div>
 <% end %>

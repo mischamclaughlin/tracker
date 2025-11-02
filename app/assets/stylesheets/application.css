@@ -3,6 +3,7 @@
 *= require notifications
 *= require assets
 *= require titles
+*= require forms
 *= require search
 *= require tables
 *= require buttons
