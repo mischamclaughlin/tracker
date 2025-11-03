@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_31_094956) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_03_160732) do
   create_table "assets", force: :cascade do |t|
     t.string "name"
     t.decimal "balance", precision: 30, scale: 18
@@ -23,7 +23,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_094956) do
     t.decimal "total_received", precision: 30, scale: 2, default: "0.0"
     t.decimal "realised_pnl", precision: 30, scale: 2, default: "0.0"
     t.decimal "balance_in_fiat", precision: 30, scale: 2
+    t.string "portfolio"
     t.index ["balance_in_fiat"], name: "index_assets_on_balance_in_fiat"
+  end
+
+  create_table "portfolios", force: :cascade do |t|
+    t.string "name"
+    t.decimal "balance_fiat", precision: 30, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "prices", force: :cascade do |t|
@@ -44,5 +52,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_094956) do
     t.decimal "amount", precision: 30, scale: 18
     t.decimal "price_at_time", precision: 30, scale: 18
     t.decimal "fiat", precision: 30, scale: 2
+    t.string "portfolio"
   end
 end
