@@ -1,0 +1,32 @@
+<%= form_with(model: portfolio) do |form| %>
+  <% if portfolio.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(portfolio.errors.count, "error") %> prohibited this portfolio from being saved:</h2>
+
+      <ul>
+        <% portfolio.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :balance_fiat, style: "display: block" %>
+    <%= form.text_field :balance_fiat %>
+  </div>
+
+  <div>
+    <%= form.label :balance_asset, style: "display: block" %>
+    <%= form.text_field :balance_asset %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
