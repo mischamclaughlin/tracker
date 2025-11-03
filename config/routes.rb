@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
+  resources :portfolios
   resources :transactions
-  resources :assets, only: [:index, :show], path: 'coins' do
+  resources :assets, only: [:index, :show], path: 'coins', param: :name do
     member do
       post :recalculate_balance
     end

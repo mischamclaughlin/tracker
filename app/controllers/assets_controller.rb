@@ -18,26 +18,24 @@ class AssetsController < ApplicationController
   def show
     @transactions = @asset.transactions.order(time: :desc)
     log_info("Viewing asset: #{@asset.name}")
-  rescue ActiveRecord::RecordNotFound
-    log_error("Asset not found with name: #{params[:id]}")
-    redirect_to assets_path, alert: 'Asset not found.'
   end
 
   def recalculate_balance
     @asset.recalculate_balance!
     log_info("Recalculated balance for asset: #{@asset.name}")
     redirect_to asset_path(@asset), notice: "#{@asset.name} balance recalculated."
-  rescue ActiveRecord::RecordNotFound
-    log_error("Asset not found with name: #{params[:id]} for balance recalculation")
-    redirect_to assets_path, alert: 'Asset not found.'
   end
 
   private
 
   def set_asset
-    @asset = Asset.find(params[:id])
+    @asset = Asset.find_by!(name: params[:name])
   rescue ActiveRecord::RecordNotFound
-    log_error("Asset not found with name: #{params[:id]}")
+    log_error("Asset not found with name: #{params[:name]}")
     redirect_to assets_path, alert: 'Asset not found.'
+  end
+
+  def asset_params
+    params.require(:asset).permit(:name, :balance, :balance_in_fiat, :avg_buy_price, :total_bought, :total_spent, :total_sold, :total_received, :realised_pnl)
   end
 end

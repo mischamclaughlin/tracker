@@ -19,6 +19,10 @@
             <%= form.select :action, options_for_select([['Buy', 'buy'], ['Sell', 'sell']], @transaction.action) %>
         </div>
         <div class="form-section">
+            <%= form.label :portfolio, 'Portfolio:' %>
+            <%= form.select :portfolio, options_for_select(Portfolio.pluck(:name).unshift('main'), @transaction.portfolio || 'main') %>
+        </div>
+        <div class="form-section">
             <%= form.label :time, 'Time:' %>
             <%= form.datetime_select :time %>
         </div>

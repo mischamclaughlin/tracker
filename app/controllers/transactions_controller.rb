@@ -14,6 +14,10 @@ class TransactionsController < ApplicationController
       log_info("Sorted transactions by #{params[:sort_by]}")
     end
   end
+  
+  def show
+    log_info("Viewing transaction with ID #{@transaction.id}")
+  end
 
   def new
     @transaction = Transaction.new
@@ -21,6 +25,9 @@ class TransactionsController < ApplicationController
       @transaction.asset = params[:asset].upcase.strip
       log_info("Initialized new transaction for asset: #{@transaction.asset}")
     end
+  end
+
+  def edit
   end
 
   def create
@@ -34,13 +41,6 @@ class TransactionsController < ApplicationController
       log_error("Failed to create transaction: #{@transaction.errors.full_messages.join(', ')}")
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def show
-    log_info("Viewing transaction with ID #{@transaction.id}")
-  end
-
-  def edit
   end
 
   def update
@@ -73,6 +73,6 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:asset, :action, :time, :memo, :amount, :fiat, :price_at_time)
+    params.require(:transaction).permit(:asset, :action, :time, :memo, :amount, :fiat, :price_at_time, :portfolio)
   end
 end

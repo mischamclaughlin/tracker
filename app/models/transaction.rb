@@ -5,6 +5,7 @@ class Transaction < ApplicationRecord
   ALLOWED_COLUMNS = %w[time fiat amount].freeze
 
   belongs_to :asset_record, class_name: 'Asset', foreign_key: :asset, primary_key: :name, optional: true
+  belongs_to :portfolio_record, class_name: 'Portfolio', foreign_key: :portfolio, primary_key: :name, optional: true
 
   validates :asset, presence: true
   validates :action, presence: true, inclusion: { in: %w[buy sell] }
@@ -14,11 +15,12 @@ class Transaction < ApplicationRecord
   validate :ensure_amount_or_fiat_provided
 
   before_validation :normalise_attributes, on: :create
+  before_validation :set_default_portfolio, on: :create
   before_validation :clean_empty_values
   before_validation :fetch_historical_price
   before_validation :compute_missing_field
   after_save :update_asset_balance
-  after_save :update_asset_metrics
+  after_save :update_metrics
   before_destroy :reverse_transaction
   before_destroy :schedule_metrics_update
 
@@ -46,6 +48,10 @@ class Transaction < ApplicationRecord
     self.memo = memo.strip if memo.present?
   end
 
+  def set_default_portfolio
+    self.portfolio ||= 'main'
+  end
+
   def clean_empty_values
     self.amount = nil if amount.to_s.strip.empty? || amount.to_f.zero? || amount.blank?
     self.fiat = nil if fiat.to_s.strip.empty? || fiat.to_f.zero? || fiat.blank?
@@ -56,9 +62,7 @@ class Transaction < ApplicationRecord
     return if price_at_time.present?
     return unless asset.present?
 
-    asset_obj = Asset.find_or_create_by(name: asset) do |a|
-      a.balance = 0
-    end
+    asset_obj = Asset.find_or_create_for(asset)
 
     local_price = asset_obj.price_at(time)
     self.price_at_time = local_price&.price
@@ -88,25 +92,29 @@ class Transaction < ApplicationRecord
   end
 
   def update_asset_balance
-    reverse_old_transaction if previously_persisted? && (saved_change_to_asset? || saved_change_to_action? || saved_change_to_amount?)
+    reverse_old_transaction if previously_persisted? && (saved_change_to_asset? || saved_change_to_action? || saved_change_to_amount? || saved_change_to_fiat? || saved_change_to_price_at_time? || saved_change_to_time? || saved_change_to_portfolio?)
     apply_transaction
   end
 
-  def update_asset_metrics
+  def update_metrics
     asset_record = Asset.find_or_create_for(asset)
     asset_record.recalculate_metrics!
   end
 
   def reverse_transaction
     asset_record = Asset.find_by(name: asset)
-
     return unless asset_record
+
+    portfolio_record = Portfolio.find_by(name: portfolio)
+    return unless portfolio_record
 
     case action
     when 'buy'
       asset_record.decrement!(:balance, amount)
+      portfolio_record.decrement!(:balance_fiat, fiat)
     when 'sell'
       asset_record.increment!(:balance, amount)
+      portfolio_record.increment!(:balance_fiat, fiat)
     end
   end
 
@@ -116,29 +124,37 @@ class Transaction < ApplicationRecord
 
   def reverse_old_transaction
     old_asset = saved_change_to_asset? ? asset_before_last_save : asset
+    old_portfolio = saved_change_to_portfolio? ? portfolio_before_last_save : portfolio
     asset_record = Asset.find_by(name: old_asset)
+    portfolio_record = Portfolio.find_by(name: old_portfolio)
 
-    return unless asset_record
+    return unless asset_record && portfolio_record
     
     old_action = saved_change_to_action? ? action_before_last_save : action
     old_amount = saved_change_to_amount? ? amount_before_last_save : amount
+    old_fiat = saved_change_to_fiat? ? fiat_before_last_save : fiat
 
     case old_action
     when 'buy'
       asset_record.decrement!(:balance, old_amount)
+      portfolio_record.decrement!(:balance_fiat, old_fiat)
     when 'sell'
       asset_record.increment!(:balance, old_amount)
+      portfolio_record.increment!(:balance_fiat, old_fiat)
     end
   end
 
   def apply_transaction
     asset_record = Asset.find_or_create_for(asset)
+    portfolio_record = Portfolio.find_or_create_for(portfolio)
 
     case action
     when 'buy'
       asset_record.increment!(:balance, amount)
+      portfolio_record.increment!(:balance_fiat, fiat)
     when 'sell'
       asset_record.decrement!(:balance, amount)
+      portfolio_record.decrement!(:balance_fiat, fiat)
     end
   end
 
