@@ -11,16 +11,16 @@
         </div>
       <% end %>
         <div class="form-section">
-            <%= form.label :asset, 'Asset:' %>
-            <%= form.text_field :asset %>
+            <%= form.label :coin_identifier, 'Coin:' %>
+            <%= form.text_field :coin_identifier %>
         </div>
         <div class="form-section">
             <%= form.label :action, 'Action:' %>
             <%= form.select :action, options_for_select([['Buy', 'buy'], ['Sell', 'sell']], @transaction.action) %>
         </div>
         <div class="form-section">
-            <%= form.label :portfolio, 'Portfolio:' %>
-            <%= form.select :portfolio, options_for_select(Portfolio.pluck(:name).unshift('main'), @transaction.portfolio || 'main') %>
+            <%= form.label :portfolio_identifier, 'Portfolio:' %>
+            <%= form.select :portfolio_identifier, options_for_select(Portfolio.pluck(:portfolio_name).unshift('main'), @transaction.portfolio_identifier || 'main') %>
         </div>
         <div class="form-section">
             <%= form.label :time, 'Time:' %>
@@ -31,12 +31,12 @@
             <%= form.text_field :memo %>
         </div>
         <div class="form-section">
-            <%= form.label :amount, 'Coin Amount:' %>
-            <%= form.number_field :amount, step: :any %>
+            <%= form.label :fiat_amount, 'Fiat Amount:' %>
+            <%= form.number_field :fiat_amount, step: :any %>
         </div>
         <div class="form-section">
-            <%= form.label :fiat, 'Fiat Amount:' %>
-            <%= form.number_field :fiat, step: :any %>
+            <%= form.label :coin_amount, 'Coin Amount:' %>
+            <%= form.number_field :coin_amount, step: :any %>
         </div>
         <div class="form-section form-btn">
             <%= form.submit 'Submit Transaction', class: "btn" %>

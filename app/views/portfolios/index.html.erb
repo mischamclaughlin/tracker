@@ -1,16 +1,33 @@
-<p style="color: green"><%= notice %></p>
+<h1 class="page-title">Portfolios</h1>
 
-<% content_for :title, "Portfolios" %>
+<%
+=begin%>
+ <%= form_with(url: transactions_path, method: :get, local: true) do %>
+    <div class="search-field">
+        <%= label_tag :asset, 'Search:' %>
+        <%= text_field_tag :asset, params[:asset] %>
+        <%= hidden_field_tag :sort_by, params[:sort_by] %>
+        <%= submit_tag 'Search' %>
+    </div>
+<% end %> 
+<%
+=end%>
 
-<h1>Portfolios</h1>
+<%
+=begin%>
+ <div class="sorting-buttons">
+  <p>Sort by:</p>
+  <%= link_to 'Time', transactions_path(asset: params[:asset], sort_by: 'time'), class: "btn #{'active' if params[:sort_by] == 'time'}" %>
+  <%= link_to 'Fiat', transactions_path(asset: params[:asset], sort_by: 'fiat'), class: "btn #{'active' if params[:sort_by] == 'fiat'}" %>
+  <%= link_to 'Asset', transactions_path(asset: params[:asset], sort_by: 'amount'), class: "btn #{'active' if params[:sort_by] == 'amount'}" %>
+</div> 
+<%
+=end%>
 
-<div id="portfolios">
-  <% @portfolios.each do |portfolio| %>
-    <%= render portfolio %>
-    <p>
-      <%= link_to "Show this portfolio", portfolio %>
-    </p>
-  <% end %>
-</div>
+<% if @portfolios.empty? %>
+  <p>No portfolios found. Create a new portfolio to get started.</p>
+<% else %>
+  <%= display_portfolios(@portfolios) %>
+<% end %>
 
 <%= link_to "New portfolio", new_portfolio_path %>

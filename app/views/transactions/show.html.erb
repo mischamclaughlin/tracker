@@ -1,17 +1,21 @@
 <h1>Transaction Details</h1>
 
-<h2>Asset: <%= @transaction.asset %></h2>
+<h2>Asset: <%= @transaction.coin_information&.symbol.upcase || 'N/A' %></h2>
 <p>Action: <%= @transaction.action %></p>
 <p>Date: <%= @transaction.time.strftime('%d/%m/%Y') %></p>
 <p>Time: <%= @transaction.time.strftime('%H:%M') %></p>
 <p>Memo: <%= @transaction.memo %></p>
-<p>Amount Coin: <%= @transaction.amount %></p>
-<p>Amount Fiat: <%= number_to_currency(@transaction.fiat) %></p>
-<p>Price at Time: <%= number_to_currency(@transaction.price_at_time) %></p>
+<p>Amount Fiat: <%= number_to_currency(@transaction.fiat_amount) %></p>
+<p>Amount Coin: <%= @transaction.coin_amount %></p>
+<p>Price at Time: <%= number_to_currency(@transaction.coin_price_at(@transaction.time)&.price) %></p>
 
 <%= link_to 'Edit', edit_transaction_path(@transaction) %>
 <br>
 <%= button_to 'Delete', @transaction, method: :delete, data: { confirm: 'Are you sure?' } %>
 <br>
 <br>
-<%= link_to "#{@transaction.asset} Portfolio", asset_path(@transaction.asset) %>
+<%
+=begin%>
+ <%= link_to "#{@transaction.asset} Portfolio", asset_path(@transaction.asset) %> 
+<%
+=end%>
