@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Holdings" %>
+
+<h1>Holdings</h1>
+
+<div id="holdings">
+  <% @holdings.each do |holding| %>
+    <%= render holding %>
+    <p>
+      <%= link_to "Show this holding", holding %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New holding", new_holding_path %>
