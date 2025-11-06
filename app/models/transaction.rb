@@ -2,173 +2,200 @@ class Transaction < ApplicationRecord
   include PriceCalculations
   include SafeOrdering
 
-  ALLOWED_COLUMNS = %w[time fiat amount].freeze
+  ALLOWED_COLUMNS = %w[time fiat_amount coin_amount].freeze unless const_defined?(:ALLOWED_COLUMNS)
 
-  belongs_to :asset_record, class_name: 'Asset', foreign_key: :asset, primary_key: :name, optional: true
-  belongs_to :portfolio_record, class_name: 'Portfolio', foreign_key: :portfolio, primary_key: :name, optional: true
+  attr_accessor :coin_identifier, :portfolio_identifier
 
-  validates :asset, presence: true
-  validates :action, presence: true, inclusion: { in: %w[buy sell] }
+  belongs_to :coin, foreign_key: 'coin_id', class_name: 'Coin'
+  belongs_to :portfolio, foreign_key: 'portfolio_id', class_name: 'Portfolio'
+
+  validates :coin_id, presence: true
+  validates :portfolio_id, presence: true
+  validates :action, presence: true, inclusion: { in: %w[buy sell transfer] }
   validates :time, presence: true
-  validates :amount, numericality: { greater_than: 0 }, allow_nil: true
-  validates :fiat, numericality: { greater_than: 0 }, allow_nil: true
-  validate :ensure_amount_or_fiat_provided
+  validates :fiat_amount, numericality: { greater_than_or_equal_to: 0 }
+  validates :coin_amount, numericality: { greater_than_or_equal_to: 0 }
 
   before_validation :normalise_attributes, on: :create
-  before_validation :set_default_portfolio, on: :create
-  before_validation :clean_empty_values
-  before_validation :fetch_historical_price
-  before_validation :compute_missing_field
-  after_save :update_asset_balance
-  after_save :update_metrics
-  before_destroy :reverse_transaction
-  before_destroy :schedule_metrics_update
+  before_validation :ensure_coin_exists, on: :create
+  before_validation :ensure_portfolio_exists, on: :create
+  before_validation :ensure_amount_provided, on: :create
+  
+  after_create :update_holding_balances
+  after_update :reverse_old_and_apply_new_transaction
+  after_destroy :reverse_transaction_from_holding
 
-  scope :search_by_asset, ->(asset_name) { where(asset: asset_name) }
-  scope :order_by_time, -> { order(time: :desc) }
-  scope :order_by_asset_balance, -> { order(amount: :desc) }
-  scope :order_by_fiat_balance, -> { order(fiat: :desc) }
+  delegate :current_price, :price_at, to: :coin, prefix: :coin, allow_nil: true
 
   def to_s
-    balance = Asset.find_by(name: asset)&.balance || 0
     "
-    Asset: #{asset},
+    Coin: #{coin.id},
+    Portfolio: #{portfolio.id}
     Action: #{action},
-    Amount: #{amount.to_s('F')},
-    Balance: #{balance.to_s('F')},
-    Time: #{time.strftime('%Y%m%d%H%M')}
+    Time: #{time.strftime('%d/%m/%Y %H:%M:%S')},
+    Memo: #{memo},
+    Fiat Amount: $#{fiat_amount.to_s('F')},
+    Coin Amount: #{coin_amount.to_s('F')},
     ".squish
+  end
+
+  def coin_information
+    Coin.find_by(id: coin_id)
+  end
+
+  def portfolio_information
+    Portfolio.find_by(id: portfolio_id)
   end
 
   private
 
+  # ================================= BEFORE ================================= #
+
   def normalise_attributes
-    self.asset = asset.upcase.strip if asset.present?
     self.action = action.downcase.strip if action.present?
     self.memo = memo.strip if memo.present?
   end
 
-  def set_default_portfolio
-    self.portfolio ||= 'main'
+  def ensure_coin_exists
+    return if coin_id.present?
+    return unless coin_identifier.present?
+    coin_identifier.strip!
+    
+    coin_record = Coin.find_by_symbol_or_name(coin_identifier)
+    unless coin_record
+      errors.add(:coin_identifier, "Coin with identifier '#{coin_identifier}' does not exist.")
+      log_error("Coin Lookup Failed for identifier: #{coin_identifier}")
+      # get notification to update coins
+      return
+    end
+
+    self.coin_id = coin_record.id
+    log_info("Coin Lookup Succeeded: #{coin_identifier} -> ID: #{coin_record.id}")
   end
 
-  def clean_empty_values
-    self.amount = nil if amount.to_s.strip.empty? || amount.to_f.zero? || amount.blank?
-    self.fiat = nil if fiat.to_s.strip.empty? || fiat.to_f.zero? || fiat.blank?
-    log_info("After clean_empty_values: [amount: #{amount}, type: #{amount.class}, fiat: #{fiat}, type: #{fiat.class}]")
+  def ensure_portfolio_exists
+    return if portfolio_id.present?
+    return unless portfolio_identifier.present?
+    portfolio_identifier.strip!
+
+    portfolio_record = Portfolio.find_or_initialize_by(portfolio_name: portfolio_identifier)
+    if portfolio_record.new_record?
+      portfolio_record.save!
+      log_info("Created new Portfolio with name: #{portfolio_identifier}")
+    else
+      log_info("Found existing Portfolio with name: #{portfolio_identifier}")
+    end
+
+    self.portfolio_id = portfolio_record.id
+    log_info("Portfolio Lookup Succeeded: #{portfolio_identifier} -> ID: #{portfolio_record.id}")
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:portfolio_identifier, "Could not create portfolio: #{e.message}")
+    log_error("Portfolio Creation Failed for identifier: #{portfolio_identifier} - #{e.message}")
   end
 
-  def fetch_historical_price
-    return if price_at_time.present?
-    return unless asset.present?
+  def ensure_amount_provided
+    if fiat_amount.zero? && coin_amount.zero?
+      errors.add(:base, 'Either fiat amount or coin amount must be provided and greater than zero.')
+      log_error("Amount Validation Failed: [FIAT AMOUNT: #{fiat_amount}, COIN AMOUNT: #{coin_amount}]")
+    end
+    log_info("Amount Validation Passed: [FIAT AMOUNT: #{fiat_amount}, COIN AMOUNT: #{coin_amount}]")
 
-    asset_obj = Asset.find_or_create_for(asset)
+    if coin_amount.zero? && fiat_amount.nonzero?
+      find_coin_amount_from_fiat
+    end
 
-    local_price = asset_obj.price_at(time)
-    self.price_at_time = local_price&.price
-
-    if price_at_time.nil? && asset_obj.coingecko_id.present?
-      self.price_at_time = CoingeckoService.fetch_historical_price(
-        asset_obj.coingecko_id,
-        time
-      )
+    if fiat_amount.zero? && coin_amount.nonzero?
+      find_fiat_amount_from_coin
     end
   end
 
-  def compute_missing_field
-    log_info("Compute Start: [amount: #{amount.inspect}, fiat: #{fiat.inspect}, price_at_time: #{price_at_time.inspect}]")
-    return unless price_at_time.present?
+  # ========================================================================= #
+  
+  # ================================= AFTER ================================= #
 
-    amount_present = amount.present? && amount.to_f > 0
-    fiat_present = fiat.present? && fiat.to_f > 0
-
-    if !amount_present && fiat_present
-      self.amount = fiat_to_asset(fiat, price_at_time)
-    elsif amount_present && !fiat_present
-      self.fiat = asset_to_fiat(amount, price_at_time)
-    end
-
-    log_info("Compute End: [amount: #{amount.inspect}, fiat: #{fiat.inspect}]")
-  end
-
-  def update_asset_balance
-    reverse_old_transaction if previously_persisted? && (saved_change_to_asset? || saved_change_to_action? || saved_change_to_amount? || saved_change_to_fiat? || saved_change_to_price_at_time? || saved_change_to_time? || saved_change_to_portfolio?)
-    apply_transaction
-  end
-
-  def update_metrics
-    asset_record = Asset.find_or_create_for(asset)
-    asset_record.recalculate_metrics!
-  end
-
-  def reverse_transaction
-    asset_record = Asset.find_by(name: asset)
-    return unless asset_record
-
-    portfolio_record = Portfolio.find_by(name: portfolio)
-    return unless portfolio_record
+  def update_holding_balances
+    holding = find_or_create_holding
 
     case action
     when 'buy'
-      asset_record.decrement!(:balance, amount)
-      portfolio_record.decrement!(:balance_fiat, fiat)
+      holding.increment!(:coin_balance, coin_amount)
     when 'sell'
-      asset_record.increment!(:balance, amount)
-      portfolio_record.increment!(:balance_fiat, fiat)
+      holding.decrement!(:coin_balance, coin_amount)
     end
   end
 
-  def schedule_metrics_update
-    @asset_for_metrics_update = asset
+  def reverse_old_and_apply_new_transaction
+    return unless saved_change_to_action? || saved_change_to_coin_amount? || saved_change_to_fiat_amount? || saved_change_to_coin_id? || saved_change_to_portfolio_id?
+
+    old_coin_id = saved_change_to_coin_id? ? coin_id_before_last_save : coin_id
+    old_portfolio_id = saved_change_to_portfolio_id? ? portfolio_id_before_last_save : portfolio_id
+    old_action = saved_change_to_action? ? action_before_last_save : action
+    old_fiat_amount = saved_change_to_fiat_amount? ? fiat_amount_before_last_save : fiat_amount
+    old_coin_amount = saved_change_to_coin_amount? ? coin_amount_before_last_save : coin_amount
+    reverse_transaction_amounts(old_coin_id, old_portfolio_id, old_action, old_fiat_amount, old_coin_amount)
+    
+    ensure_amount_provided
+    update_holding_balances
   end
 
-  def reverse_old_transaction
-    old_asset = saved_change_to_asset? ? asset_before_last_save : asset
-    old_portfolio = saved_change_to_portfolio? ? portfolio_before_last_save : portfolio
-    asset_record = Asset.find_by(name: old_asset)
-    portfolio_record = Portfolio.find_by(name: old_portfolio)
+  def reverse_transaction_from_holding
+    reverse_transaction_amounts(coin_id, portfolio_id, action, fiat_amount, coin_amount)
+  end
 
-    return unless asset_record && portfolio_record
-    
-    old_action = saved_change_to_action? ? action_before_last_save : action
-    old_amount = saved_change_to_amount? ? amount_before_last_save : amount
-    old_fiat = saved_change_to_fiat? ? fiat_before_last_save : fiat
+  def reverse_transaction_amounts(old_coin_id, old_portfolio_id, old_action, old_fiat_amount, old_coin_amount)
+    holding = Holding.find_by(coin_id: old_coin_id, portfolio_id: old_portfolio_id)
+    return unless holding
 
     case old_action
     when 'buy'
-      asset_record.decrement!(:balance, old_amount)
-      portfolio_record.decrement!(:balance_fiat, old_fiat)
+      holding.decrement!(:coin_balance, old_coin_amount)
+      log_info("Reversed old 'buy' transaction: Decremented Coin Balance by #{old_coin_amount} for Holding [Coin ID: #{old_coin_id}, Portfolio ID: #{old_portfolio_id}]")
     when 'sell'
-      asset_record.increment!(:balance, old_amount)
-      portfolio_record.increment!(:balance_fiat, old_fiat)
+      holding.increment!(:coin_balance, old_coin_amount)
+      log_info("Reversed old 'sell' transaction: Incremented Coin Balance by #{old_coin_amount} for Holding [Coin ID: #{old_coin_id}, Portfolio ID: #{old_portfolio_id}]")
     end
   end
 
-  def apply_transaction
-    asset_record = Asset.find_or_create_for(asset)
-    portfolio_record = Portfolio.find_or_create_for(portfolio)
-
-    case action
-    when 'buy'
-      asset_record.increment!(:balance, amount)
-      portfolio_record.increment!(:balance_fiat, fiat)
-    when 'sell'
-      asset_record.decrement!(:balance, amount)
-      portfolio_record.decrement!(:balance_fiat, fiat)
+  # =========================================================================== #
+  
+  # ================================= HELPERS ================================= #
+  
+  def find_coin_amount_from_fiat
+    price = coin_current_price&.price || coin_price_at(time)&.price
+    if price.nil? || price.zero?
+      errors.add(:base, 'Unable to determine coin amount: price data is unavailable.')
+      log_error("Price Lookup Failed: Cannot calculate coin amount from fiat amount #{fiat_amount}")
+      return
     end
+
+    self.coin_amount = fiat_to_coin(fiat_amount, price)
+    log_info("Calculated Coin Amount: #{coin_amount} from Fiat Amount: #{fiat_amount} at Price: #{price}")
   end
 
-  def previously_persisted?
-    !saved_change_to_id?
+  def find_fiat_amount_from_coin
+    price = coin_current_price&.price || coin_price_at(time)&.price
+    if price.nil?
+      errors.add(:base, 'Unable to determine fiat amount: price data is unavailable.')
+      log_error("Price Lookup Failed: Cannot calculate fiat amount from coin amount #{coin_amount}")
+      return
+    end
+
+    self.fiat_amount = coin_to_fiat(coin_amount, price)
+    log_info("Calculated Fiat Amount: #{fiat_amount} from Coin Amount: #{coin_amount} at Price: #{price}")
   end
 
-  def ensure_amount_or_fiat_provided
-    amount_present = amount.present? && amount.to_f > 0
-    fiat_present = fiat.present? && fiat.to_f > 0
-    log_info("Validation Check: [amount_valid: #{amount_present}, fiat_valid: #{fiat_present}]")
-
-    unless amount_present || fiat_present
-      errors.add(:base, 'Either amount or fiat value must be provided.')
+  def find_or_create_holding
+    holding = Holding.find_or_initialize_by(coin_id: coin_id, portfolio_id: portfolio_id)
+    if holding.new_record?
+      holding.save!
+      log_info("Created new Holding for Coin ID #{coin_id} and Portfolio ID #{portfolio_id}")
+      return holding
     end
+
+    log_info("Found existing Holding for Coin ID #{coin_id} and Portfolio ID #{portfolio_id}")
+    holding
+  rescue ActiveRecord::RecordNotUnique
+    log_info("Holding already exists for Coin ID #{coin_id} and Portfolio ID #{portfolio_id}")
+    Holding.find_by!(coin_id: coin_id, portfolio_id: portfolio_id)
   end
 end
