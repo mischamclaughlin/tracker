@@ -6,7 +6,7 @@ describe Transaction do
   let(:price) { prices(:bitcoin_current_price) }
   let(:transaction_buy_bitcoin) { transactions(:buy_bitcoin) }
   let(:transaction_sell_ethereum) { transactions(:sell_ethereum) }
-  let(:holding_bitcoin_main) { holdings(:bitcoin_main) }
+  let(:holding_bitcoin_main) { holdings(:main_bitcoin) }
 
   describe "#to_s" do
     it "returns a string representation of the transaction" do
