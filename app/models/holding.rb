@@ -8,25 +8,10 @@ class Holding < ApplicationRecord
 
   def to_s
     "
+    Holding ID: #{id},
     Coin: #{coin.id},
     Portfolio: #{portfolio.id},
     Coin Balance: #{coin_balance.to_s('F')}
     ".squish
-  end
-
-  def current_fiat_value
-    coin_balance * (coin.current_price || 0)
-  end
-
-  def total_fiat_invested
-    buys = transactions.where(transaction_type: 'buy').sum(:fiat_value)
-    sells = transactions.where(transaction_type: 'sell').sum(:fiat_value)
-    total_invested = buys - sells
-    log_info("Total Fiat Invested Calculation - Buys: #{buys}, Sells: #{sells}, Total Invested: #{total_invested}")
-    total_invested
-  end
-
-  def profit_loss
-    current_fiat_value - total_fiat_invested
   end
 end
