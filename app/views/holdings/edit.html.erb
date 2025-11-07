@@ -1,0 +1,12 @@
+<% content_for :title, "Editing holding" %>
+
+<h1>Editing holding</h1>
+
+<%= render "form", holding: @holding %>
+
+<br>
+
+<div>
+  <%= link_to "Show this holding", @holding %> |
+  <%= link_to "Back to holdings", holdings_path %>
+</div>

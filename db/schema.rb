@@ -10,48 +10,59 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_03_160732) do
-  create_table "assets", force: :cascade do |t|
-    t.string "name"
-    t.decimal "balance", precision: 30, scale: 18
+ActiveRecord::Schema[8.0].define(version: 2025_11_05_121732) do
+  create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "total_bought", precision: 30, scale: 18, default: "0.0"
-    t.decimal "total_spent", precision: 30, scale: 2, default: "0.0"
-    t.decimal "avg_buy_price", precision: 30, scale: 2, default: "0.0"
-    t.decimal "total_sold", precision: 30, scale: 18, default: "0.0"
-    t.decimal "total_received", precision: 30, scale: 2, default: "0.0"
-    t.decimal "realised_pnl", precision: 30, scale: 2, default: "0.0"
-    t.decimal "balance_in_fiat", precision: 30, scale: 2
-    t.string "portfolio"
-    t.index ["balance_in_fiat"], name: "index_assets_on_balance_in_fiat"
+    t.string "coin_name"
+    t.string "symbol"
+    t.string "coingecko_id"
+  end
+
+  create_table "holdings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "coin_id"
+    t.bigint "portfolio_id"
+    t.decimal "coin_balance", precision: 30, scale: 18, default: "0.0"
+    t.index ["coin_id", "portfolio_id"], name: "index_holdings_on_coin_id_and_portfolio_id", unique: true
+    t.index ["coin_id"], name: "index_holdings_on_coin_id"
+    t.index ["portfolio_id"], name: "index_holdings_on_portfolio_id"
   end
 
   create_table "portfolios", force: :cascade do |t|
-    t.string "name"
-    t.decimal "balance_fiat", precision: 30, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "portfolio_name"
+    t.string "description"
   end
 
   create_table "prices", force: :cascade do |t|
-    t.string "asset"
-    t.decimal "price", precision: 30, scale: 18
-    t.datetime "recorded_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "coin_id"
+    t.decimal "price", precision: 30, scale: 2
+    t.datetime "recorded_at"
+    t.index ["coin_id"], name: "index_prices_on_coin_id"
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "asset"
-    t.string "action"
-    t.datetime "time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "coin_id"
+    t.bigint "portfolio_id"
+    t.string "action"
+    t.datetime "time"
     t.string "memo"
-    t.decimal "amount", precision: 30, scale: 18
-    t.decimal "price_at_time", precision: 30, scale: 18
-    t.decimal "fiat", precision: 30, scale: 2
-    t.string "portfolio"
+    t.decimal "fiat_amount", precision: 30, scale: 2, default: "0.0"
+    t.decimal "coin_amount", precision: 30, scale: 18, default: "0.0"
+    t.index ["coin_id"], name: "index_transactions_on_coin_id"
+    t.index ["portfolio_id"], name: "index_transactions_on_portfolio_id"
   end
+
+  add_foreign_key "holdings", "coins"
+  add_foreign_key "holdings", "portfolios"
+  add_foreign_key "prices", "coins"
+  add_foreign_key "transactions", "coins"
+  add_foreign_key "transactions", "portfolios"
 end

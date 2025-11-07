@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @holding %>
+
+<div>
+  <%= link_to "Edit this holding", edit_holding_path(@holding) %> |
+  <%= link_to "Back to holdings", holdings_path %>
+
+  <%= button_to "Destroy this holding", @holding, method: :delete %>
+</div>

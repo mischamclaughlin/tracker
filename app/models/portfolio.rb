@@ -1,40 +1,51 @@
 class Portfolio < ApplicationRecord
-  include PriceCalculations
-  include PriceLookup
+  has_many :transactions, foreign_key: 'portfolio_id', class_name: 'Transaction'
+  has_many :holdings, foreign_key: 'portfolio_id', class_name: 'Holding'
 
-  self.primary_key = 'name'
-
-  has_many :assets, foreign_key: :portfolio, primary_key: :name
-  has_many :transactions, through: :assets
-  has_many :prices, foreign_key: :asset, primary_key: :name
-
-  validates :name, presence: true, uniqueness: true
-  validates :balance_fiat, presence: true, numericality: true
+  validates :portfolio_name, presence: true, uniqueness: true
 
   def to_s
     "
-    Portfolio: #{name},
-    Balance: #{balance_fiat.to_s('F')}
+    Portfolio ID: #{id},
+    Portfolio Name: #{portfolio_name},
+    Portfolio Description: #{portfolio_description},
+    Portfolio Created At: #{created_at.strftime('%d/%m/%Y %H:%M:%S')}
     ".squish
   end
 
-  def self.find_or_create_for(portfolio_name)
-    find_or_create_by(name: portfolio_name) do |portfolio|
-      portfolio.balance_fiat = 0
+  def balance_fiat_main
+    total += holdings.sum do |holding|
+      price = holding.coin.current_price&.price || 0
+      holding.coin_balance * price
+    end
+    total
+  end
+
+  def total_coin_balance_for(coin)
+    holding = holdings.find_by(coin_id: coin.id)
+    holding ? holding.coin_balance : 0
+  end
+
+  def current_value
+    holdings.includes(:coin).sum do |holding|
+      price = holding.coin.current_price&.price || 0
+      holding.coin_balance * price
     end
   end
 
-  def recalculate_balance!
-    # Sum all fiat values from transactions
-    calculated_balance = Transaction.where(portfolio: name).sum("CASE WHEN action = 'buy' THEN -fiat WHEN action = 'sell' THEN fiat ELSE 0 END")
-    update_column(:balance_fiat, calculated_balance.abs)
+  def total_fiat_invested
+    buys = transactions.where(action: 'buy').sum(:fiat_amount)
+    sells = transactions.where(action: 'sell').sum(:fiat_amount)
+    buys - sells
   end
 
-  private
+  def profit_loss
+    current_value - total_fiat_invested
+  end
 
-  def update_fiat_balance!
-    price = current_price&.price || price_at(Time.now)
-    new_balance_in_fiat = asset_to_fiat(balance_asset, price)
-    update_column(:balance_fiat, new_balance_in_fiat)
+  def profit_loss_percentage
+    return 0 if total_fiat_invested.zero?
+
+    (profit_loss / total_fiat_invested * 100).round(2)
   end
 end

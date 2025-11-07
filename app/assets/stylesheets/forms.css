@@ -1,4 +1,5 @@
-.new-transaction-form {
+.new-transaction-form,
+.new-portfolio-form {
     display: flex;
     flex-direction: column;
     justify-content: center;

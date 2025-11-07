@@ -1,0 +1,14 @@
+bitcoin:
+  coin_name: Bitcoin
+  symbol: btc
+  coingecko_id: bitcoin
+
+ethereum:
+  coin_name: Ethereum
+  symbol: eth
+  coingecko_id: ethereum
+
+ripple:
+  coin_name: Ripple
+  symbol: xrp
+  coingecko_id: ripple

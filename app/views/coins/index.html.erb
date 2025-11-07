@@ -1,0 +1,31 @@
+<h1>Coins</h1>
+
+<%
+=begin%>
+ <%= form_with(url: transactions_path, method: :get, local: true) do %>
+    <div class="search-field">
+        <%= label_tag :asset, 'Search by Asset:' %>
+        <%= text_field_tag :asset, params[:asset] %>
+        <%= hidden_field_tag :sort_by, params[:sort_by] %>
+        <%= submit_tag 'Search' %>
+    </div>
+<% end %> 
+<%
+=end%>
+
+<%
+=begin%>
+ <div class="sorting-buttons">
+  <p>Sort by:</p>
+  <%= link_to 'Time', transactions_path(asset: params[:asset], sort_by: 'time'), class: "btn #{'active' if params[:sort_by] == 'time'}" %>
+  <%= link_to 'Fiat', transactions_path(asset: params[:asset], sort_by: 'fiat'), class: "btn #{'active' if params[:sort_by] == 'fiat'}" %>
+  <%= link_to 'Asset', transactions_path(asset: params[:asset], sort_by: 'amount'), class: "btn #{'active' if params[:sort_by] == 'amount'}" %>
+</div> 
+<%
+=end%>
+
+<% if @coins.empty? %>
+  <p>No coins found. Add some coins to get started.</p>
+<% else %>
+  <%= display_coins(@coins) %>
+<% end %>

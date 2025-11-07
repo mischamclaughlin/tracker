@@ -1,11 +1,8 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+main:
+  portfolio_name: Main
+  description: Primary portfolio for tracking investments
 
-one:
-  name: MyString
-  balance_fiat: 9.99
-  balance_asset: 9.99
+test:
+  portfolio_name: Test
+  description: Secondary portfolio for testing purposes
 
-two:
-  name: MyString
-  balance_fiat: 9.99
-  balance_asset: 9.99

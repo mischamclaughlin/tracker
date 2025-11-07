@@ -2,19 +2,17 @@ class FetchPricesJob < ApplicationJob
   queue_as :default
 
   def perform
-    Asset.all.each do |asset|
-      next unless asset.price_trackable?
-
-      price = CoingeckoService.fetch_current_price(asset.coingecko_id)
+    Coin.all.each do |coin|
+      price = CoingeckoService.fetch_current_price(coin.coingecko_id)
       if price.present?
         Price.create(
-          asset: asset.name,
+          coin_id: coin.id,
           price: price,
           recorded_at: Time.current
         )
-        log_info("✅ Fetched price for #{asset.name}: $#{price}")
+        log_info("✅ Fetched price for #{coin.coin_name}: $#{price}")
       else
-        log_error("❌ Fetch failed for #{asset.name}")
+        log_error("❌ Fetch failed for #{coin.coin_name}")
       end
     end
   end

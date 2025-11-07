@@ -1,0 +1,9 @@
+main_bitcoin:
+  coin: bitcoin
+  portfolio: main
+  coin_balance: 1.5
+
+main_ethereum:
+  coin: ethereum
+  portfolio: main
+  coin_balance: 5.0

@@ -3,11 +3,11 @@ class PortfoliosController < ApplicationController
 
   def index
     @portfolios = Portfolio.all
+    log_info("Fetched all portfolios")
   end
 
   def show
-    @assets = @portfolio.assets.order(:name)
-    log_info("Viewing portfolio: #{@portfolio.name}")
+    log_info("Viewing portfolio: #{@portfolio.portfolio_name}")
   rescue ActiveRecord::RecordNotFound
     log_error("Portfolio not found with id: #{params[:id]}")
     redirect_to portfolios_path, alert: 'Portfolio not found.'
@@ -55,8 +55,8 @@ class PortfoliosController < ApplicationController
 
   def recalculate_balance
     @portfolio.recalculate_balance!
-    log_info("Recalculated balance for portfolio: #{@portfolio.name}")
-    redirect_to portfolio_path(@portfolio), notice: "#{@portfolio.name} balance recalculated."
+    log_info("Recalculated balance for portfolio: #{@portfolio.portfolio_name}")
+    redirect_to portfolio_path(@portfolio), notice: "#{@portfolio.portfolio_name} balance recalculated."
   rescue ActiveRecord::RecordNotFound
     log_error("Portfolio not found with id: #{params[:id]} for balance recalculation")
     redirect_to portfolios_path, alert: 'Portfolio not found.'
@@ -72,6 +72,6 @@ class PortfoliosController < ApplicationController
     end
 
     def portfolio_params
-      params.require(:portfolio).permit(:name, :balance_fiat)
+      params.require(:portfolio).permit(:portfolio_name, :description)
     end
 end

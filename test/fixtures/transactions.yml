@@ -1,11 +1,17 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+buy_bitcoin:
+  coin: bitcoin
+  portfolio: main
+  action: buy
+  time: <%= Time.current %>
+  memo: T0
+  fiat_amount: 150_000.0
+  coin_amount: 0
 
-one:
-  assest: MyString
-  action: MyString
-  time: 2025-10-22
-
-two:
-  assest: MyString
-  action: MyString
-  time: 2025-10-22
+sell_ethereum:
+  coin: ethereum
+  portfolio: main
+  action: sell
+  memo: T1
+  time: <%= Time.current %>
+  fiat_amount: 8_000.0
+  coin_amount: 0.0
