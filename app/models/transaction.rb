@@ -29,8 +29,9 @@ class Transaction < ApplicationRecord
 
   def to_s
     "
-    Coin: #{coin.id},
-    Portfolio: #{portfolio.id}
+    Transaction ID: #{id},
+    Coin ID: #{coin.id},
+    Portfolio ID: #{portfolio.id},
     Action: #{action},
     Time: #{time.strftime('%d/%m/%Y %H:%M:%S')},
     Memo: #{memo},
