@@ -8,16 +8,18 @@ describe Holding do
   let(:transaction_sell_bitcoin) { transactions(:sell_bitcoin) }
   let(:holding_bitcoin_main) { holdings(:main_bitcoin) }
 
-  describe "#to_s" do
-    it "returns a string representation of the holding" do
-      expected_string = "
-      Holding ID: #{holding_bitcoin_main.id},
-      Coin: #{holding_bitcoin_main.coin.id},
-      Portfolio: #{holding_bitcoin_main.portfolio.id},
-      Coin Balance: #{holding_bitcoin_main.coin_balance.to_s('F')}
-      ".squish
+  context "when calling public methods" do
+    describe "#to_s" do
+      it "returns a string representation of the holding" do
+        expected_string = "
+        Holding ID: #{holding_bitcoin_main.id},
+        Coin: #{holding_bitcoin_main.coin.id},
+        Portfolio: #{holding_bitcoin_main.portfolio.id},
+        Coin Balance: #{holding_bitcoin_main.coin_balance.to_s('F')}
+        ".squish
 
-      assert_equal expected_string, holding_bitcoin_main.to_s
+        assert_equal expected_string, holding_bitcoin_main.to_s
+      end
     end
   end
 
