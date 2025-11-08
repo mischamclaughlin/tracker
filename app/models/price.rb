@@ -10,7 +10,7 @@ class Price < ApplicationRecord
 
   def to_s
     "
-    Coin: #{coin.id},
+    Coin ID: #{coin.id},
     Price: $#{price.to_s('F')},
     Recorded At: #{recorded_at.strftime('%d/%m/%Y %H:%M:%S')}
     ".squish

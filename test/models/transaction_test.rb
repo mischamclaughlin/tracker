@@ -6,22 +6,25 @@ describe Transaction do
   let(:price) { prices(:bitcoin_current_price) }
   let(:transaction_buy_bitcoin) { transactions(:buy_bitcoin) }
   let(:transaction_sell_ethereum) { transactions(:sell_ethereum) }
-  let(:holding_bitcoin_main) { holdings(:bitcoin_main) }
+  let(:holding_bitcoin_main) { holdings(:main_bitcoin) }
 
-  describe "#to_s" do
-    it "returns a string representation of the transaction" do
-      expected_string = "
-      Transaction ID: #{transaction_buy_bitcoin.id},
-      Coin ID: #{transaction_buy_bitcoin.coin_id},
-      Portfolio ID: #{transaction_buy_bitcoin.portfolio_id},
-      Action: #{transaction_buy_bitcoin.action},
-      Time: #{transaction_buy_bitcoin.time.strftime("%d/%m/%Y %H:%M:%S")},
-      Memo: #{transaction_buy_bitcoin.memo},
-      Fiat Amount: $#{transaction_buy_bitcoin.fiat_amount.to_s("F")},
-      Coin Amount: #{transaction_buy_bitcoin.coin_amount.to_s("F")},
-      ".squish
+  
+  context "when calling public methods" do
+    describe "#to_s" do
+      it "returns a string representation of the transaction" do
+        expected_string = "
+        Transaction ID: #{transaction_buy_bitcoin.id},
+        Coin ID: #{transaction_buy_bitcoin.coin_id},
+        Portfolio ID: #{transaction_buy_bitcoin.portfolio_id},
+        Action: #{transaction_buy_bitcoin.action},
+        Time: #{transaction_buy_bitcoin.time.strftime("%d/%m/%Y %H:%M:%S")},
+        Memo: #{transaction_buy_bitcoin.memo},
+        Fiat Amount: $#{transaction_buy_bitcoin.fiat_amount.to_s("F")},
+        Coin Amount: #{transaction_buy_bitcoin.coin_amount.to_s("F")},
+        ".squish
 
-      assert_equal expected_string, transaction_buy_bitcoin.to_s
+        assert_equal expected_string, transaction_buy_bitcoin.to_s
+      end
     end
   end
 
