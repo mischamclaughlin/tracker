@@ -2,8 +2,16 @@ class PortfoliosController < ApplicationController
   before_action :set_portfolio, only: %i[ show edit update destroy ]
 
   def index
-    @portfolios = Portfolio.all
-    log_info("Fetched all portfolios")
+    log_info("Portfolio index accessed with params: #{params.inspect}")
+    if params[:name] && !params[:name].strip.empty?
+      normalise_name = params[:name].upcase.strip
+      @portfolios = Portfolio.search_by_portfolio_name(normalise_name).order_by_column(params[:sort_by])
+      log_info("Searched portfolios by name: #{normalise_name}")
+    else
+      @portfolios = Portfolio.all.order_by_column(params[:sort_by])
+      log_info("Fetched all portfolios")
+      log_info("Sorted portfolios by #{params[:sort_by]}")
+    end
   end
 
   def show
