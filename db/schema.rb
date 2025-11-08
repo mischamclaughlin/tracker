@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_05_121732) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_08_193025) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -35,6 +35,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_121732) do
     t.datetime "updated_at", null: false
     t.string "portfolio_name"
     t.string "description"
+    t.decimal "balance", precision: 30, scale: 2, default: "0.0", null: false
+    t.decimal "total_invested", precision: 30, scale: 2, default: "0.0", null: false
+    t.decimal "profit_loss", precision: 30, scale: 2, default: "0.0", null: false
+    t.decimal "profit_loss_percentage", precision: 10, scale: 2, default: "0.0", null: false
   end
 
   create_table "prices", force: :cascade do |t|
