@@ -12,9 +12,11 @@ class Coin < ApplicationRecord
 
   def to_s
     "
+    Coin ID: #{id},
     Coin Name: #{coin_name},
-    Symbol: #{symbol},
-    CoinGecko ID: #{coingecko_id}
+    Coin Symbol: #{symbol},
+    CoinGecko ID: #{coingecko_id},
+    Created At: #{created_at.strftime('%d/%m/%Y %H:%M:%S')}
     ".squish
   end
 

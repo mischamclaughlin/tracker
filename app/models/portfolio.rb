@@ -8,17 +8,9 @@ class Portfolio < ApplicationRecord
     "
     Portfolio ID: #{id},
     Portfolio Name: #{portfolio_name},
-    Portfolio Description: #{portfolio_description},
+    Portfolio Description: #{description},
     Portfolio Created At: #{created_at.strftime('%d/%m/%Y %H:%M:%S')}
     ".squish
-  end
-
-  def balance_fiat_main
-    total += holdings.sum do |holding|
-      price = holding.coin.current_price&.price || 0
-      holding.coin_balance * price
-    end
-    total
   end
 
   def total_coin_balance_for(coin)
