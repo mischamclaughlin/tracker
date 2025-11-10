@@ -1,0 +1,5 @@
+class ChangeColumnNameFromBalanceToFiatBalance < ActiveRecord::Migration[8.0]
+  def change
+    rename_column :portfolios, :balance, :fiat_balance
+  end
+end

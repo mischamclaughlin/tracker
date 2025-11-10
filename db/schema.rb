@@ -10,13 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_08_193025) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_115759) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "coin_name"
     t.string "symbol"
     t.string "coingecko_id"
+    t.decimal "fiat_balance", precision: 30, scale: 2, default: "0.0", null: false
+    t.decimal "coin_balance", precision: 30, scale: 18, default: "0.0", null: false
+    t.decimal "latest_price", precision: 30, scale: 18, default: "0.0", null: false
   end
 
   create_table "holdings", force: :cascade do |t|
@@ -35,7 +38,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_08_193025) do
     t.datetime "updated_at", null: false
     t.string "portfolio_name"
     t.string "description"
-    t.decimal "balance", precision: 30, scale: 2, default: "0.0", null: false
+    t.decimal "fiat_balance", precision: 30, scale: 2, default: "0.0", null: false
     t.decimal "total_invested", precision: 30, scale: 2, default: "0.0", null: false
     t.decimal "profit_loss", precision: 30, scale: 2, default: "0.0", null: false
     t.decimal "profit_loss_percentage", precision: 10, scale: 2, default: "0.0", null: false
