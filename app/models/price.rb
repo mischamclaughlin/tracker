@@ -5,8 +5,8 @@ class Price < ApplicationRecord
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :recorded_at, presence: true
 
-  after_create :update_portfolio_prices
-  after_update :update_portfolio_prices
+  after_create :update_prices
+  after_update :update_prices
 
   def to_s
     "
@@ -16,11 +16,23 @@ class Price < ApplicationRecord
     ".squish
   end
 
-  def update_portfolio_prices
+  def update_prices
+    update_portfolios_metrics
+    update_coins_metrics
+  end
+
+  private
+
+  def update_portfolios_metrics
     portfolios = Portfolio.joins(holdings: :coin).where(coins: { id: coin_id }).distinct
     portfolios.each do |portfolio|
-      portfolio.update_metrics!
-      log_info("Updated Portfolio ID: #{portfolio.id} due to Price change for Coin ID: #{coin_id}")
+      portfolio.update_portfolio_metrics!
+      log_info("Updated Portfolio ID: #{portfolio.id} metrics after Price ID: #{id} change")
     end
+  end
+
+  def update_coins_metrics
+    coin.update_coin_metrics!
+    log_info("Updated Coin ID: #{coin.id} metrics after Price ID: #{id} change")
   end
 end
