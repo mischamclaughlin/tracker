@@ -1,10 +1,10 @@
 module PortfoliosHelper
   def total_portfolios_value(portfolios)
-    portfolios.sum(&:current_value)
+    portfolios.sum(&:fiat_balance)
   end
 
   def total_portfolios_invested(portfolios)
-    portfolios.sum(&:total_fiat_invested)
+    portfolios.sum(&:total_invested)
   end
 
   def total_portfolios_profit_loss(portfolios)
@@ -44,7 +44,7 @@ module PortfoliosHelper
       portfolios.each do |portfolio|
         concat(content_tag(:tr) do
           concat(content_tag(:td, portfolio.portfolio_name))
-          concat(content_tag(:td, number_to_currency(portfolio.balance), class: 'numeric'))
+          concat(content_tag(:td, number_to_currency(portfolio.fiat_balance), class: 'numeric'))
           concat(content_tag(:td, number_to_currency(portfolio.total_invested), class: 'numeric'))
           concat(content_tag(:td, content_tag(:div, number_to_currency(portfolio.profit_loss), class: portfolio.profit_loss.positive? ? 'positive numeric' : 'negative numeric')))
           concat(content_tag(:td, content_tag(:div, "#{'%.2f' % portfolio.profit_loss_percentage}%", class: portfolio.profit_loss_percentage.positive? ? 'positive numeric' : 'negative numeric')))

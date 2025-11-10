@@ -1,14 +1,16 @@
 class PortfoliosController < ApplicationController
+  include SortParamGuard
+
   before_action :set_portfolio, only: %i[ show edit update destroy ]
 
   def index
     log_info("Portfolio index accessed with params: #{params.inspect}")
     if params[:name] && !params[:name].strip.empty?
       normalise_name = params[:name].upcase.strip
-      @portfolios = Portfolio.search_by_portfolio_name(normalise_name).order_by_column(params[:sort_by])
+      @portfolios = Portfolio.search_by_portfolio_name(normalise_name).order_by_column(params[:sort_by], params[:dir])
       log_info("Searched portfolios by name: #{normalise_name}")
     else
-      @portfolios = Portfolio.all.order_by_column(params[:sort_by])
+      @portfolios = Portfolio.all.order_by_column(params[:sort_by], params[:dir])
       log_info("Fetched all portfolios")
       log_info("Sorted portfolios by #{params[:sort_by]}")
     end
@@ -80,6 +82,6 @@ class PortfoliosController < ApplicationController
     end
 
     def portfolio_params
-      params.require(:portfolio).permit(:portfolio_name, :description)
+      params.require(:portfolio).permit(:portfolio_name, :description, :balance, :total_invested, :profit_loss, :profit_loss_percentage)
     end
 end

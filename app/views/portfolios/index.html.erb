@@ -5,6 +5,7 @@
         <%= label_tag :name, 'Search:' %>
         <%= text_field_tag :name, params[:name] %>
         <%= hidden_field_tag :sort_by, params[:sort_by] %>
+        <%= hidden_field_tag :dir, params[:dir] %>
         <%= submit_tag 'Search', class: "btn" %>
     </div>
 <% end %> 
@@ -12,13 +13,13 @@
  <div class="sorting-buttons">
   <p>Sort by:</p>
   <%= link_to 'Name', portfolios_path(portfolio_name: params[:name], sort_by: 'portfolio_name', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'portfolio_name'}" %>
-  <%= link_to 'Balance', portfolios_path(portfolio_name: params[:name], sort_by: 'portfolio_balance', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'portfolio_balance'}" %>
+  <%= link_to 'Balance', portfolios_path(portfolio_name: params[:name], sort_by: 'fiat_balance', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'fiat_balance'}" %>
   <%= link_to 'Invested', portfolios_path(portfolio_name: params[:name], sort_by: 'total_invested', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'total_invested'}" %>
   <%= link_to 'Profit', portfolios_path(portfolio_name: params[:name], sort_by: 'profit_loss', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'profit_loss'}" %>
   <%= link_to 'Profit %', portfolios_path(portfolio_name: params[:name], sort_by: 'profit_loss_percentage', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'profit_loss_percentage'}" %>
   <div>
-    <%= link_to 'Up', portfolios_path(portfolio_name: params[:name], dir: 'asc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'asc'}" %>
-    <%= link_to 'Down', portfolios_path(portfolio_name: params[:name], dir: 'desc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'desc'}" %>
+    <%= link_to 'Up', portfolios_path(portfolio_name: params[:name], dir: 'desc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'desc'}" %>
+    <%= link_to 'Down', portfolios_path(portfolio_name: params[:name], dir: 'asc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'asc'}" %>
   </div>
 </div>
 
