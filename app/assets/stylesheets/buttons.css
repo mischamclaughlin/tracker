@@ -16,7 +16,9 @@
     border: solid 1px #003d7e;
 }
 
-.sorting-buttons {
+.sorting-buttons,
+.action-buttons,
+.back-button {
     display: flex;
     justify-content: center;
     align-items: center;

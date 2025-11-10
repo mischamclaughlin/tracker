@@ -3,8 +3,13 @@
     width: 95%;
     padding: 0.025rem;
     border-radius: 1rem;
-    backdrop-filter: blur(10px);
-    background-color: rgba(3, 60, 126, 0.5);
-    color: white;
     text-align: center;
+}
+
+.footer-text {
+    transition: color 0.3s ease;
+}
+
+.footer:hover .footer-text {
+    color: rgba(255, 255, 255, 0.85);
 }
