@@ -3,20 +3,21 @@
     width: 95%;
     padding: 0.025rem;
     border-radius: 1rem;
-    backdrop-filter: blur(10px);
-    background-color: rgba(3, 60, 126, 0.5);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.85);
     display: flex;
     justify-content: space-around;
     align-items: center;
 }
 
-.nav-link {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: bolder;
+.navbar:hover .nav-link {
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.nav-link:hover {
-    text-decoration: underline;
+.nav-link {
+    text-decoration: none;
+    font-weight: bolder;
+    transition: color 0.3s ease;
+}
+
+.navbar:hover .nav-link:hover {
+    color: rgba(255, 255, 255, 1);
 }

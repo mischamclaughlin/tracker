@@ -1,7 +1,9 @@
 .assets-table,
 .transactions-table,
 .portfolios-table,
-.coins-table {
+.coins-table,
+.portfolio-details-table,
+.transaction-details-table {
     border-collapse: collapse;
     table-layout: auto;
     word-break: break-all;
@@ -29,7 +31,7 @@
         color: #00ff22;
     }
 
-    .positive, .negative {
+    .positive, .negative, .neutral {
         color: white;
         border-radius: 0.1rem;
         padding: 0.1rem;
@@ -41,5 +43,9 @@
 
     .negative {
         background-color: red;
+    }
+
+    .neutral {
+        background-color: gray;
     }
 }

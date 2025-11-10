@@ -20,3 +20,24 @@ body {
     justify-content: center;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
+
+.glass {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 4px 4px 30px rgba(10, 10, 10, 0.1);
+    transition: all 0.6s ease;
+}
+
+.glass h1,
+.glass h2,
+.glass p,
+.glass a {
+    color: rgba(255, 255, 255, 0.35);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.glass:hover {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

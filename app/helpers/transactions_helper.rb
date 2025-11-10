@@ -28,4 +28,46 @@ module TransactionsHelper
       end
     end
   end
+
+  def display_transaction_details(transaction)
+    content_tag(:table, class: 'transaction-details-table') do
+      concat(content_tag(:tr) do
+        concat(content_tag(:th, 'Attribute'))
+        concat(content_tag(:th, 'Value'))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Coin'))
+        concat(content_tag(:td, transaction.coin_information&.symbol.upcase || 'N/A'))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Portfolio'))
+        concat(content_tag(:td, transaction.portfolio_information&.portfolio_name || 'N/A'))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Action'))
+        concat(content_tag(:td, transaction.action))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Date'))
+        concat(content_tag(:td, transaction.time.strftime('%d/%m/%Y')))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Time'))
+        concat(content_tag(:td, transaction.time.strftime('%H:%M:%S')))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Fiat Amount'))
+        concat(content_tag(:td, number_to_currency(transaction.fiat_amount)))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Coin Amount'))
+        concat(content_tag(:td, "#{'%.8f' % transaction.coin_amount}"))
+      end)
+      concat(content_tag(:tr) do
+        concat(content_tag(:td, 'Price at Time'))
+        price_at_time = transaction.coin_price_at(transaction.time)&.price
+        concat(content_tag(:td, price_at_time ? number_to_currency(price_at_time) : 'N/A'))
+      end)
+    end
+  end
 end
