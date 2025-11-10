@@ -3,6 +3,7 @@ class Transaction < ApplicationRecord
   include SafeOrdering
 
   ALLOWED_COLUMNS = %w[time fiat_amount coin_amount].freeze unless const_defined?(:ALLOWED_COLUMNS)
+  ALPHA_COLS = %w[].freeze unless const_defined?(:ALPHA_COLS)
 
   attr_accessor :coin_identifier, :portfolio_identifier
 
@@ -22,7 +23,11 @@ class Transaction < ApplicationRecord
   before_validation :ensure_amount_provided, on: :create
   
   after_create :update_holding_balances
+  after_create :update_portfolio_metrics
+  after_create :update_coin_metrics
   after_update :reverse_old_and_apply_new_transaction
+  after_update :update_portfolio_metrics
+  after_update :update_coin_metrics
   after_destroy :reverse_transaction_from_holding
 
   delegate :current_price, :price_at, to: :coin, prefix: :coin, allow_nil: true
@@ -46,6 +51,11 @@ class Transaction < ApplicationRecord
 
   def portfolio_information
     Portfolio.find_by(id: portfolio_id)
+  end
+
+  def self.search(identifier)
+    key = identifier.to_s.downcase
+    joins(:coin, :portfolio).where('LOWER(coins.symbol) = ? OR LOWER(coins.coin_name) = ? OR LOWER(portfolios.portfolio_name) LIKE ?', key, key, "%#{key}%")
   end
 
   private
@@ -155,6 +165,16 @@ class Transaction < ApplicationRecord
       holding.increment!(:coin_balance, old_coin_amount)
       log_info("Reversed old 'sell' transaction: Incremented Coin Balance by #{old_coin_amount} for Holding [Coin ID: #{old_coin_id}, Portfolio ID: #{old_portfolio_id}]")
     end
+  end
+
+  def update_portfolio_metrics
+    portfolio.update_portfolio_metrics!
+    log_info("Updated Portfolio ID: #{portfolio.id} metrics after Transaction ID: #{id} change")
+  end
+
+  def update_coin_metrics
+    coin.update_coin_metrics!
+    log_info("Updated Coin ID: #{coin.id} metrics after Transaction ID: #{id} change")
   end
 
   # =========================================================================== #

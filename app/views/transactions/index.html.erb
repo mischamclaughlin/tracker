@@ -2,18 +2,23 @@
 
 <%= form_with(url: transactions_path, method: :get, local: true) do %>
     <div class="search-field">
-        <%= label_tag :asset, 'Search by Asset:' %>
-        <%= text_field_tag :asset, params[:asset] %>
+        <%= label_tag :name, 'Search by Coin:' %>
+        <%= text_field_tag :name, params[:name] %>
         <%= hidden_field_tag :sort_by, params[:sort_by] %>
-        <%= submit_tag 'Search' %>
+        <%= hidden_field_tag :dir, params[:dir] %>
+        <%= submit_tag 'Search', class: 'btn' %>
     </div>
 <% end %>
 
 <div class="sorting-buttons">
   <p>Sort by:</p>
-  <%= link_to 'Time', transactions_path(asset: params[:asset], sort_by: 'time'), class: "btn #{'active' if params[:sort_by] == 'time'}" %>
-  <%= link_to 'Fiat', transactions_path(asset: params[:asset], sort_by: 'fiat'), class: "btn #{'active' if params[:sort_by] == 'fiat'}" %>
-  <%= link_to 'Asset', transactions_path(asset: params[:asset], sort_by: 'amount'), class: "btn #{'active' if params[:sort_by] == 'amount'}" %>
+  <%= link_to 'Time', transactions_path(coin_name: params[:name], sort_by: 'time', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'time'}" %>
+  <%= link_to 'Fiat', transactions_path(coin_name: params[:name], sort_by: 'fiat_amount', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'fiat_amount'}" %>
+  <%= link_to 'Coin', transactions_path(coin_name: params[:name], sort_by: 'coin_amount', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'coin_amount'}" %>
+  <div>
+    <%= link_to 'Up', transactions_path(coin_name: params[:name], dir: 'desc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'desc'}" %>
+    <%= link_to 'Down', transactions_path(coin_name: params[:name], dir: 'asc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'asc'}" %>
+  </div>
 </div>
 
 <% if @transactions.empty? %>

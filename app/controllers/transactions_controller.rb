@@ -4,13 +4,13 @@ class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :edit, :update, :destroy]
 
   def index
-    if params[:asset] && !params[:asset].strip.empty?
-      normalise_asset = params[:asset].upcase.strip
-      @transactions = Transaction.includes(:asset_record).search_by_asset(normalise_asset).order_by_column(params[:sort_by])
-      log_info("Searched transactions by asset: #{normalise_asset}")
+    log_info("Transaction index accessed with params: #{params.inspect}")
+    if params[:name] && !params[:name].strip.empty?
+      normalise_name = params[:name].upcase.strip
+      @transactions = Transaction.includes(:coin, :portfolio).search(normalise_name).order_by_column(params[:sort_by], params[:dir])
+      log_info("Searched transactions by asset: #{normalise_name}")
     else
-      # @transactions = Transaction.includes(:asset_record).order_by_column(params[:sort_by])
-      @transactions = Transaction.all.order_by_column(params[:sort_by])
+      @transactions = Transaction.all.order_by_column(params[:sort_by], params[:dir])
       log_info("Fetched all transactions")
       log_info("Sorted transactions by #{params[:sort_by]}")
     end

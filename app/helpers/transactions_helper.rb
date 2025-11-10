@@ -21,7 +21,7 @@ module TransactionsHelper
           concat(content_tag(:td, transaction.time.strftime('%d/%m/%Y')))
           concat(content_tag(:td, transaction.time.strftime('%H:%M')))
           concat(content_tag(:td, number_to_currency(transaction.fiat_amount), class: 'numeric'))
-          concat(content_tag(:td, transaction.coin_amount.round(10), class: 'numeric'))
+          concat(content_tag(:td, "#{'%.8f' % transaction.coin_amount}", class: 'numeric'))
           concat(content_tag(:td, number_to_currency(transaction.coin_price_at(transaction.time)&.price), class: 'numeric'))
           concat(content_tag(:td, link_to('View', transaction_path(transaction))))
         end)
