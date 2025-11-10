@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_115759) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_10_172820) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -68,8 +68,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_115759) do
   end
 
   add_foreign_key "holdings", "coins"
-  add_foreign_key "holdings", "portfolios"
+  add_foreign_key "holdings", "portfolios", on_delete: :cascade
   add_foreign_key "prices", "coins"
   add_foreign_key "transactions", "coins"
-  add_foreign_key "transactions", "portfolios"
+  add_foreign_key "transactions", "portfolios", on_delete: :cascade
 end

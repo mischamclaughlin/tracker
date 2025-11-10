@@ -29,6 +29,8 @@ class Transaction < ApplicationRecord
   after_update :update_portfolio_metrics
   after_update :update_coin_metrics
   after_destroy :reverse_transaction_from_holding
+  after_destroy :update_portfolio_metrics
+  after_destroy :update_coin_metrics
 
   delegate :current_price, :price_at, to: :coin, prefix: :coin, allow_nil: true
 
