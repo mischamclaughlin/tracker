@@ -1,6 +1,10 @@
 class Coin < ApplicationRecord
   include PriceCalculations
   include PriceLookup
+  include SafeOrdering
+
+  ALLOWED_COLUMNS = %w[coin_name symbol fiat_balance coin_balance latest_price].freeze unless const_defined?(:ALLOWED_COLUMNS)
+  ALPHA_COLS = %w[coin_name symbol].freeze unless const_defined?(:ALPHA_COLS)
 
   has_many :transactions, foreign_key: 'coin_id', class_name: 'Transaction'
   has_many :holdings, foreign_key: 'coin_id', class_name: 'Holding'
@@ -23,5 +27,32 @@ class Coin < ApplicationRecord
   def self.find_by_symbol_or_name(identifier)
     key = identifier.downcase
     where('LOWER(symbol) = ? OR LOWER(coin_name) = ?', key, key).first
+  end
+
+  def self.search(identifier)
+    key = identifier.to_s.downcase
+    where('LOWER(symbol) LIKE ? OR LOWER(coin_name) LIKE ?', "%#{key}%", "%#{key}%")
+  end
+
+  def update_coin_metrics!
+    update_columns(
+      fiat_balance: calculate_balance_fiat,
+      coin_balance: calculate_balance_coin,
+      latest_price: fetch_current_price&.price
+    )
+  end
+
+  private
+
+  def fetch_current_price
+    prices.order(recorded_at: :desc).first
+  end
+
+  def calculate_balance_coin
+    holdings.sum(:coin_balance).to_d
+  end
+
+  def calculate_balance_fiat
+    coin_to_fiat(calculate_balance_coin, fetch_current_price&.price).to_d
   end
 end

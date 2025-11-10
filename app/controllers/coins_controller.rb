@@ -1,9 +1,19 @@
 class CoinsController < ApplicationController
+  include SortParamGuard
+
   before_action :set_coin, only: %i[ show edit update destroy ]
 
   def index
-    @coins = Coin.all
-    log_info("Fetched all coins")
+    log_info("Coin index accessed with params: #{params.inspect}")
+    if params[:name] && !params[:name].strip.empty?
+      normalise_name = params[:name].upcase.strip
+      @coins = Coin.search(normalise_name).order_by_column(params[:sort_by], params[:dir])
+      log_info("Searched coins by name: #{normalise_name}")
+    else
+      @coins = Coin.all.order_by_column(params[:sort_by], params[:dir])
+      log_info("Fetched all coins")
+      log_info("Sorted coins by #{params[:sort_by]}")
+    end
   end
 
   def show

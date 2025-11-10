@@ -1,28 +1,27 @@
 <h1>Coins</h1>
 
-<%
-=begin%>
- <%= form_with(url: transactions_path, method: :get, local: true) do %>
+<%= form_with(url: coins_path, method: :get, local: true) do %>
     <div class="search-field">
-        <%= label_tag :asset, 'Search by Asset:' %>
-        <%= text_field_tag :asset, params[:asset] %>
+        <%= label_tag :name, 'Search by Coin:' %>
+        <%= text_field_tag :name, params[:name] %>
         <%= hidden_field_tag :sort_by, params[:sort_by] %>
-        <%= submit_tag 'Search' %>
+        <%= hidden_field_tag :dir, params[:dir] %>
+        <%= submit_tag 'Search', class: 'btn' %>
     </div>
 <% end %> 
-<%
-=end%>
 
-<%
-=begin%>
  <div class="sorting-buttons">
   <p>Sort by:</p>
-  <%= link_to 'Time', transactions_path(asset: params[:asset], sort_by: 'time'), class: "btn #{'active' if params[:sort_by] == 'time'}" %>
-  <%= link_to 'Fiat', transactions_path(asset: params[:asset], sort_by: 'fiat'), class: "btn #{'active' if params[:sort_by] == 'fiat'}" %>
-  <%= link_to 'Asset', transactions_path(asset: params[:asset], sort_by: 'amount'), class: "btn #{'active' if params[:sort_by] == 'amount'}" %>
+  <%= link_to 'Coin', coins_path(asset: params[:asset], sort_by: 'coin_name', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'coin_name'}" %>
+  <%= link_to 'Symbol', coins_path(asset: params[:asset], sort_by: 'symbol', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'symbol'}" %>
+  <%= link_to 'Fiat', coins_path(asset: params[:asset], sort_by: 'fiat_balance', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'fiat_balance'}" %>
+  <%= link_to 'Coin', coins_path(asset: params[:asset], sort_by: 'coin_balance', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'coin_balance'}" %>
+  <%= link_to 'Price', coins_path(asset: params[:asset], sort_by: 'latest_price', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'latest_price'}" %>
+  <div>
+    <%= link_to 'Up', coins_path(portfolio_name: params[:name], dir: 'desc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'desc'}" %>
+    <%= link_to 'Down', coins_path(portfolio_name: params[:name], dir: 'asc', sort_by: params[:sort_by]), class: "btn #{'active' if params[:dir] == 'asc'}" %>
+  </div>
 </div> 
-<%
-=end%>
 
 <% if @coins.empty? %>
   <p>No coins found. Add some coins to get started.</p>
