@@ -1,10 +1,16 @@
-<p style="color: green"><%= notice %></p>
+<h1>Portfolio Details: <%= @portfolio.portfolio_name %></h1>
 
-<%= render @portfolio %>
+<% if @portfolio.description.present? %>
+  <p><%= @portfolio.description %></p>
+<% end %>
 
-<div>
-  <%= link_to "Edit this portfolio", edit_portfolio_path(@portfolio) %> |
-  <%= link_to "Back to portfolios", portfolios_path %>
+<%= display_portfolio_details(@portfolio) %>
 
-  <%= button_to "Destroy this portfolio", @portfolio, method: :delete %>
+<div class="action-buttons">
+  <%= link_to "All Portfolios", portfolios_path, class: "btn" %>
+  <%= link_to "Edit", edit_portfolio_path(@portfolio), class: "btn" %>
+  <%= button_to "Delete", @portfolio, method: :delete, class: "btn" %>
 </div>
+
+<h2>Transactions</h2>
+<%= display_transactions(@portfolio.transactions) %>

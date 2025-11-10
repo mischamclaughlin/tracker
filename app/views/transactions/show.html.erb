@@ -1,21 +1,14 @@
-<h1>Transaction Details</h1>
+<h1>Transaction Details: <%= @transaction.action.capitalize %> <%= @transaction.coin_information&.symbol.upcase || 'N/A' %></h1>
 
-<h2>Asset: <%= @transaction.coin_information&.symbol.upcase || 'N/A' %></h2>
-<p>Action: <%= @transaction.action %></p>
-<p>Date: <%= @transaction.time.strftime('%d/%m/%Y') %></p>
-<p>Time: <%= @transaction.time.strftime('%H:%M') %></p>
-<p>Memo: <%= @transaction.memo %></p>
-<p>Amount Fiat: <%= number_to_currency(@transaction.fiat_amount) %></p>
-<p>Amount Coin: <%= @transaction.coin_amount %></p>
-<p>Price at Time: <%= number_to_currency(@transaction.coin_price_at(@transaction.time)&.price) %></p>
+<% if @transaction.memo.present? %>
+  <p><%= @transaction.memo %></p>
+<% end %>
 
-<%= link_to 'Edit', edit_transaction_path(@transaction) %>
-<br>
-<%= button_to 'Delete', @transaction, method: :delete, data: { confirm: 'Are you sure?' } %>
-<br>
-<br>
-<%
-=begin%>
- <%= link_to "#{@transaction.asset} Portfolio", asset_path(@transaction.asset) %> 
-<%
-=end%>
+<%= display_transaction_details(@transaction) %>
+
+<div class="action-buttons">
+  <%= link_to "All Transactions", transactions_path, class: "btn" %>
+  <%= link_to "#{@transaction.portfolio.portfolio_name} Portfolio", portfolio_path(@transaction.portfolio), class: "btn" %>
+  <%= link_to 'Edit', edit_transaction_path(@transaction), class: "btn" %>
+  <%= button_to 'Delete', @transaction, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn" %>
+</div>
