@@ -1,15 +1,25 @@
 .footer {
     margin-top: auto;
-    width: 95%;
-    padding: 0.025rem;
-    border-radius: 1rem;
-    text-align: center;
+    width: auto;
+    padding: 0 3rem;
+    border-radius: 9999px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    gap: 1rem;
+}
+
+.footer p {
+    margin: auto;
 }
 
 .footer-text {
-    transition: color 0.3s ease;
+    transition:
+        color 0.3s ease,
+        background 0.6s;
 }
 
 .footer:hover .footer-text {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 1);
 }
