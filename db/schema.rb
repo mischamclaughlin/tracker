@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_11_152208) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_11_153819) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -75,6 +75,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_11_152208) do
     t.string "first_name"
     t.string "last_name"
     t.string "username", default: "", null: false
+    t.string "email", default: "", null: false
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
