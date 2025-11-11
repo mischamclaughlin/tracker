@@ -3,8 +3,8 @@ class Coin < ApplicationRecord
   include PriceLookup
   include SafeOrdering
 
-  ALLOWED_COLUMNS = %w[coin_name symbol fiat_balance coin_balance latest_price].freeze unless const_defined?(:ALLOWED_COLUMNS)
-  ALPHA_COLS = %w[coin_name symbol].freeze unless const_defined?(:ALPHA_COLS)
+  ALLOWED_COLUMNS = %w[symbol coin_name fiat_balance coin_balance latest_price].freeze unless const_defined?(:ALLOWED_COLUMNS)
+  ALPHA_COLS = %w[symbol coin_name].freeze unless const_defined?(:ALPHA_COLS)
 
   has_many :transactions, foreign_key: 'coin_id', class_name: 'Transaction'
   has_many :holdings, foreign_key: 'coin_id', class_name: 'Holding'

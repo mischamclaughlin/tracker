@@ -46,7 +46,7 @@ module PortfoliosHelper
         concat(content_tag(:th, 'Invested'))
         concat(content_tag(:th, 'Profit'))
         concat(content_tag(:th, 'Profit %'))
-        concat(content_tag(:th, 'Actions'))
+        concat(content_tag(:th, 'View'))
       end)
       unless params[:name]
         concat(content_tag(:tr) do
