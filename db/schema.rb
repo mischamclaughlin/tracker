@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_10_172820) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_11_152208) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -42,6 +42,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_172820) do
     t.decimal "total_invested", precision: 30, scale: 2, default: "0.0", null: false
     t.decimal "profit_loss", precision: 30, scale: 2, default: "0.0", null: false
     t.decimal "profit_loss_percentage", precision: 10, scale: 2, default: "0.0", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_portfolios_on_user_id"
   end
 
   create_table "prices", force: :cascade do |t|
@@ -67,8 +69,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_10_172820) do
     t.index ["portfolio_id"], name: "index_transactions_on_portfolio_id"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "username", default: "", null: false
+    t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
   add_foreign_key "holdings", "coins"
   add_foreign_key "holdings", "portfolios", on_delete: :cascade
+  add_foreign_key "portfolios", "users"
   add_foreign_key "prices", "coins"
   add_foreign_key "transactions", "coins"
   add_foreign_key "transactions", "portfolios", on_delete: :cascade
