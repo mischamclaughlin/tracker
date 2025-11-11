@@ -58,7 +58,7 @@ module PortfoliosHelper
           concat(content_tag(:td, number_to_currency(portfolio.total_invested), class: 'numeric'))
           concat(content_tag(:td, content_tag(:div, number_to_currency(portfolio.profit_loss), class: pnl_value_class(portfolio.profit_loss))))
           concat(content_tag(:td, content_tag(:div, "#{'%.2f' % portfolio.profit_loss_percentage}%", class: pnl_value_class(portfolio.profit_loss_percentage))))
-          concat(content_tag(:td, link_to('View', portfolio_path(portfolio))))
+          concat(content_tag(:td, link_to('View', portfolio_path(portfolio), class: 'btn btn-small')))
         end)
       end
     end

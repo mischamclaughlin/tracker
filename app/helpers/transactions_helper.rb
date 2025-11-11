@@ -23,7 +23,7 @@ module TransactionsHelper
           concat(content_tag(:td, number_to_currency(transaction.fiat_amount), class: 'numeric'))
           concat(content_tag(:td, "#{'%.8f' % transaction.coin_amount}", class: 'numeric'))
           concat(content_tag(:td, number_to_currency(transaction.coin_price_at(transaction.time)&.price), class: 'numeric'))
-          concat(content_tag(:td, link_to('View', transaction_path(transaction))))
+          concat(content_tag(:td, link_to('View', transaction_path(transaction), class: 'btn btn-small')))
         end)
       end
     end
