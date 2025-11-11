@@ -9,6 +9,7 @@
     word-break: break-all;
     width: 100vw;
     padding: 0.5rem;
+    padding-bottom: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;

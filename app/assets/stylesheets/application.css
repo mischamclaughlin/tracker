@@ -34,10 +34,10 @@ body {
 .glass h2,
 .glass p,
 .glass a {
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.25);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .glass:hover {
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
