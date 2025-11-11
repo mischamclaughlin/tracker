@@ -32,6 +32,18 @@
         color: #00ff22;
     }
 
+    .main-positive {
+        color: green;
+    }
+
+    .main-negative {
+        color: red;
+    }
+
+    .main-neutral {
+        color: gray;
+    }
+
     .positive, .negative, .neutral {
         color: white;
         border-radius: 0.1rem;

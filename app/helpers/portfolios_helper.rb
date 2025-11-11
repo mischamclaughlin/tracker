@@ -28,6 +28,16 @@ module PortfoliosHelper
     end
   end
 
+  def main_portfolio_pnl_class(value)
+    if value.positive?
+      'main-positive'
+    elsif value.negative?
+      'main-negative'
+    else
+      'main-neutral'
+    end
+  end
+
   def display_portfolios(portfolios)
     content_tag(:table, class: 'portfolios-table') do
       concat(content_tag(:tr) do
@@ -40,12 +50,12 @@ module PortfoliosHelper
       end)
       unless params[:name]
         concat(content_tag(:tr) do
-          concat(content_tag(:td, 'Main', class: 'main'))
-          concat(content_tag(:td, number_to_currency(total_portfolios_value(portfolios)), class: 'numeric main'))
-          concat(content_tag(:td, number_to_currency(total_portfolios_invested(portfolios)), class: 'numeric main'))
-          concat(content_tag(:td, content_tag(:div, number_to_currency(total_portfolios_profit_loss(portfolios)), class: total_portfolios_profit_loss(portfolios).positive? ? 'main positive numeric' : 'main negative numeric')))
-          concat(content_tag(:td, content_tag(:div, "#{'%.2f' % total_portfolios_profit_loss_percentage(portfolios)}%", class: total_portfolios_profit_loss_percentage(portfolios).positive? ? 'main positive numeric' : 'main negative numeric')))
-          concat(content_tag(:td, '---', class: 'main'))
+          concat(content_tag(:td, 'Main', class: main_portfolio_pnl_class(total_portfolios_profit_loss(portfolios))))
+          concat(content_tag(:td, number_to_currency(total_portfolios_value(portfolios)), class: "numeric #{main_portfolio_pnl_class(total_portfolios_profit_loss(portfolios))}"))
+          concat(content_tag(:td, number_to_currency(total_portfolios_invested(portfolios)), class: "numeric #{main_portfolio_pnl_class(total_portfolios_profit_loss(portfolios))}"))
+          concat(content_tag(:td, content_tag(:div, number_to_currency(total_portfolios_profit_loss(portfolios)), class: pnl_value_class(total_portfolios_profit_loss(portfolios)))))
+          concat(content_tag(:td, content_tag(:div, "#{'%.2f' % total_portfolios_profit_loss_percentage(portfolios)}%", class: pnl_value_class(total_portfolios_profit_loss_percentage(portfolios)))))
+          concat(content_tag(:td, '---', class: main_portfolio_pnl_class(total_portfolios_profit_loss(portfolios))))
         end)
         concat(content_tag(:tr) do
           concat(content_tag(:td, '', colspan: 6, class: 'spacer-row'))

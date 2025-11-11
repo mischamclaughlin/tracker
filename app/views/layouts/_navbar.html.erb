@@ -1,9 +1,9 @@
 <nav class="navbar glass">
   <h2><%= link_to 'Tracker', portfolios_path, class: "nav-title #{nav_list_active?(portfolios_path)}" %></h2>
   <div class="nav-links-container">
-    <p><%= link_to 'Portfolios', portfolios_path, class: "nav-link #{nav_list_active?(portfolios_path)}" %></p>
-    <p><%= link_to 'Coins', coins_path, class: "nav-link #{nav_list_active?(coins_path)}" %></p>
-    <p><%= link_to 'Transactions', transactions_path, class: "nav-link #{nav_list_active?(transactions_path)}" %></p>
-    <p><%= link_to 'New', new_transaction_path, class: "nav-link #{nav_list_active?(new_transaction_path)}" %></p>
+    <p><%= link_to nav_label('Portfolios', portfolios_path), portfolios_path, class: "nav-link #{nav_list_active?(portfolios_path)}" %></p>
+    <p><%= link_to nav_label('Coins', coins_path), coins_path, class: "nav-link #{nav_list_active?(coins_path)}" %></p>
+    <p><%= link_to nav_label('Transactions', transactions_path), transactions_path, class: "nav-link #{nav_list_active?(transactions_path)}" %></p>
+    <p><%= link_to nav_label('New', new_transaction_path), new_transaction_path, class: "nav-link #{nav_list_active?(new_transaction_path)}" %></p>
   </div>
 </nav>
