@@ -10,6 +10,11 @@ class Transaction < ApplicationRecord
   belongs_to :coin, foreign_key: 'coin_id', class_name: 'Coin'
   belongs_to :portfolio, foreign_key: 'portfolio_id', class_name: 'Portfolio'
 
+  before_validation :normalise_attributes, on: :create
+  before_validation :ensure_coin_exists, on: :create
+  before_validation :ensure_portfolio_exists, on: :create
+  before_validation :ensure_amount_provided, on: :create
+
   validates :coin_id, presence: true
   validates :portfolio_id, presence: true
   validates :action, presence: true, inclusion: { in: %w[buy sell transfer] }
@@ -17,11 +22,6 @@ class Transaction < ApplicationRecord
   validates :fiat_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :coin_amount, numericality: { greater_than_or_equal_to: 0 }
 
-  before_validation :normalise_attributes, on: :create
-  before_validation :ensure_coin_exists, on: :create
-  before_validation :ensure_portfolio_exists, on: :create
-  before_validation :ensure_amount_provided, on: :create
-  
   after_create :update_holding_balances
   after_create :update_portfolio_metrics
   after_create :update_coin_metrics
