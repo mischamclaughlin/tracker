@@ -6,6 +6,9 @@ class Portfolio < ApplicationRecord
 
   has_many :transactions, foreign_key: 'portfolio_id', class_name: 'Transaction'
   has_many :holdings, foreign_key: 'portfolio_id', class_name: 'Holding'
+  belongs_to :user, foreign_key: 'user_id', class_name: 'User'
+
+  before_validation :ensure_user_exists, on: :create
 
   validates :portfolio_name, presence: true, uniqueness: true
 
@@ -30,6 +33,10 @@ class Portfolio < ApplicationRecord
   end
 
   private
+
+  def ensure_user_exists
+    errors.add(:user, 'must exist') unless User.exists?(id: user_id)
+  end
 
   def calculate_current_value
     holdings.includes(:coin).sum do |holding|
