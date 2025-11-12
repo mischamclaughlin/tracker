@@ -6,7 +6,7 @@
 
 <%= display_transaction_details(@transaction) %>
 
-<div class="action-buttons">
+<div class="btns">
   <%= link_to "All Transactions", transactions_path, class: "btn" %>
   <%= link_to "#{@transaction.portfolio.portfolio_name} Portfolio", portfolio_path(@transaction.portfolio), class: "btn" %>
   <%= link_to 'Edit', edit_transaction_path(@transaction), class: "btn" %>

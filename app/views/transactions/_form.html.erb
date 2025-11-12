@@ -1,5 +1,5 @@
-<%= form_with(model: @transaction, local: true) do |form| %>
-  <div class='new-transaction-form'>
+<%= form_with(model: @transaction, data: { turbo_frame: "_top"}, local: true) do |form| %>
+  <div class='new-transaction-form glass'>
       <% if @transaction.errors.any? %>
         <div>
           <h2><%= pluralize(@transaction.errors.count, "error") %> prohibited this transaction from being saved:</h2>
@@ -11,7 +11,7 @@
         </div>
       <% end %>
         <div class="form-section">
-            <%= form.label :coin_identifier, 'Coin:' %>
+            <%= form.label :coin_identifier, 'Coin Name/Symbol:' %>
             <%= form.text_field :coin_identifier %>
         </div>
         <div class="form-section">
@@ -20,7 +20,7 @@
         </div>
         <div class="form-section">
             <%= form.label :portfolio_identifier, 'Portfolio:' %>
-            <%= form.select :portfolio_identifier, options_for_select(Portfolio.pluck(:portfolio_name).unshift('main'), @transaction.portfolio_identifier || 'main') %>
+            <%= form.select :portfolio_identifier, options_for_select(current_user.portfolios.pluck(:portfolio_name).unshift('main'), @transaction.portfolio_identifier || 'main') %>
         </div>
         <div class="form-section">
             <%= form.label :time, 'Time:' %>
@@ -41,6 +41,5 @@
         <div class="form-section form-btn">
             <%= form.submit 'Submit Transaction', class: "btn" %>
         </div>
-        <br>
   </div>
 <% end %>

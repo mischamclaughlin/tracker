@@ -6,7 +6,7 @@
 
 <%= display_portfolio_details(@portfolio) %>
 
-<div class="action-buttons">
+<div class="btns">
   <%= link_to "All Portfolios", portfolios_path, class: "btn" %>
   <%= link_to "Edit", edit_portfolio_path(@portfolio), class: "btn" %>
   <%= button_to "Delete", @portfolio, method: :delete, class: "btn" %>
