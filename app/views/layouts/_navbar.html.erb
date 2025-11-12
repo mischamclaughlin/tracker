@@ -1,9 +1,14 @@
 <nav class="navbar glass">
   <h2><%= link_to 'Tracker', portfolios_path, class: "nav-title #{nav_list_active?(portfolios_path)}" %></h2>
   <div class="nav-links-container">
-    <p><%= link_to nav_label('Portfolios', portfolios_path), portfolios_path, class: "nav-link #{nav_list_active?(portfolios_path)}" %></p>
-    <p><%= link_to nav_label('Coins', coins_path), coins_path, class: "nav-link #{nav_list_active?(coins_path)}" %></p>
-    <p><%= link_to nav_label('Transactions', transactions_path), transactions_path, class: "nav-link #{nav_list_active?(transactions_path)}" %></p>
-    <p><%= link_to nav_label('New', new_transaction_path), new_transaction_path, class: "nav-link #{nav_list_active?(new_transaction_path)}" %></p>
+    <% if user_signed_in? %>
+      <p><%= link_to nav_label('Portfolios', portfolios_path), portfolios_path, class: "nav-link #{nav_list_active?(portfolios_path)}" %></p>
+      <p><%= link_to nav_label('Coins', coins_path), coins_path, class: "nav-link #{nav_list_active?(coins_path)}" %></p>
+      <p><%= link_to nav_label('Transactions', transactions_path), transactions_path, class: "nav-link #{nav_list_active?(transactions_path)}" %></p>
+      <p><%= link_to nav_label('New', new_transaction_path), new_transaction_path, class: "nav-link #{nav_list_active?(new_transaction_path)}" %></p>
+      <p><%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link #{nav_list_active?(destroy_user_session_path)}" %></p>
+    <% else %>
+      <p><%= link_to 'Login', new_user_session_path, class: "nav-link #{nav_list_active?(new_user_session_path)}" %></p>
+    <% end %>
   </div>
 </nav>
