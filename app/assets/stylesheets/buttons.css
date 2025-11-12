@@ -7,6 +7,7 @@
     border-radius: 0.25rem;
     text-decoration: none;
     text-align: center;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s, border-color 0.3s;
 }
@@ -22,9 +23,7 @@
     color: #ffffff;
 }
 
-.sorting-buttons,
-.action-buttons,
-.back-button {
+.btns {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -10,7 +10,7 @@
     </div>
 <% end %>
 
-<div class="sorting-buttons">
+<div class="btns">
   <p>Sort by:</p>
   <%= link_to 'Time', transactions_path(coin_name: params[:name], sort_by: 'time', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'time'}" %>
   <%= link_to 'Fiat', transactions_path(coin_name: params[:name], sort_by: 'fiat_amount', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'fiat_amount'}" %>

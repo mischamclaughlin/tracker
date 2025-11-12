@@ -47,7 +47,7 @@ module SortParamGuard
   end
 
   def set_coin_params
-    default_param = 'coin_name'
+    default_param = 'symbol'
     default_path = :coins_path
     { default_param: default_param, default_path: default_path, allowed_columns: Coin::ALLOWED_COLUMNS }
   end

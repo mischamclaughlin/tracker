@@ -32,3 +32,8 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore metadata files
+/.DS_Store
+.DS_Store
+/.vscode/

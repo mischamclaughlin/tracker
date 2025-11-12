@@ -5,14 +5,16 @@ u3 = { first_name: 'Samantha', last_name: 'Lee', username: 'samanthalee', email:
 u4 = { first_name: 'David', last_name: 'Kim', username: 'davidkim', email: 'david@example.com' }
 u5 = { first_name: 'Emily', last_name: 'Davis', username: 'emilydavis', email: 'emily@example.com' }
 users = [u1, u2, u3, u4, u5]
+pwd = ENV['SEED_PWD'].presence || 'dev123456'
 
 users.each do |user_attrs|
-  User.find_or_create_by!(username: user_attrs[:username]) do |user|
-    user.first_name = user_attrs[:first_name]
-    user.last_name = user_attrs[:last_name]
-    user.username = user_attrs[:username]
-    user.email = user_attrs[:email]
+  user = User.find_or_initialize_by(username: user_attrs[:username])
+  user.assign_attributes(user_attrs)
+  if user.new_record? || user.encrypted_password.blank?
+    user.password = pwd
+    user.password_confirmation = pwd
   end
+  user.save!
 end
 puts "Seeded #{User.count} users."
 
