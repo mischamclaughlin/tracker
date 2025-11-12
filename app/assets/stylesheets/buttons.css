@@ -1,8 +1,8 @@
 .btn {
     padding: 5px 10px;
     font-size: 16px;
-    color: #fff;
-    background-color: #003d7e;
+    color: #000000;
+    background-color: #c05000;
     border: solid 1px #000000;
     border-radius: 0.25rem;
     text-decoration: none;
@@ -18,7 +18,8 @@
 
 .btn:hover, .btn.active {
     background-color: #000000;
-    border: solid 1px #003d7e;
+    border: solid 1px #c05000;
+    color: #ffffff;
 }
 
 .sorting-buttons,
