@@ -39,8 +39,12 @@ class TransactionsController < ApplicationController
     log_info("Transaction Params: #{transaction_params.inspect}")
 
     if @transaction.save
-      log_info("Created transaction with ID #{@transaction.id}")
-      redirect_to @transaction, notice: 'Transaction was successfully created.', status: :see_other
+      ref_path = URI.parse(request.referer).path rescue nil
+      if ref_path == quick_add_path
+        redirect_to quick_add_path(transaction: @transaction), notice: "Transaction created.", status: :see_other
+      else
+        redirect_to @transactions, notice: "Transaction created.", status: :see_other
+      end
     else
       log_error("Failed to create transaction: #{@transaction.errors.full_messages.join(', ')}")
       render :new, status: :unprocessable_entity

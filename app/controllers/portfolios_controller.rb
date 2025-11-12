@@ -35,18 +35,22 @@ class PortfoliosController < ApplicationController
     log_info("Portfolio Params: #{portfolio_params.inspect}")
 
     if @portfolio.save
-      log_info("Created portfolio with ID #{@portfolio.id}")
-      redirect_to @portfolio, notice: "Portfolio was successfully created.", status: :see_other
-    else
-      log_error("Failed to create portfolio: #{@portfolio.errors.full_messages.join(', ')}")
-      render :new, status: :unprocessable_entity
+    ref_path = URI.parse(request.referer).path rescue nil
+      if ref_path == quick_add_path
+        redirect_to quick_add_path(portfolio: @portfolio.portfolio_name), notice: "#{@portfolio.portfolio_name} created.", status: :see_other
+      elsif ref_path == new_transaction_path
+        redirect_to @portfolio, notice: "#{@portfolio.portfolio_name} created.", status: :see_other
+      else
+        log_error("Failed to create portfolio: #{@portfolio.errors.full_messages.join(', ')}")
+        render :new, status: :unprocessable_entity
+      end
     end
   end
 
   def update
     if @portfolio.update(portfolio_params)
       log_info("Updated portfolio with ID #{@portfolio.id}")
-      redirect_to @portfolio, notice: "Portfolio was successfully updated."
+      redirect_to @portfolio, notice: "#{@portfolio.portfolio_name} was successfully updated."
     else
       log_error("Failed to update portfolio with ID #{@portfolio.id}: #{@portfolio.errors.full_messages.join(', ')}")
       render :edit, status: :unprocessable_entity
@@ -56,7 +60,7 @@ class PortfoliosController < ApplicationController
   def destroy
     if @portfolio.destroy
       log_info("Deleted portfolio with ID #{@portfolio.id}")
-      redirect_to portfolios_path, notice: "Portfolio was successfully destroyed.", status: :see_other
+      redirect_to portfolios_path, notice: "#{@portfolio.portfolio_name} was successfully destroyed.", status: :see_other
     else
       log_error("Failed to delete portfolio with ID #{@portfolio.id}: #{@portfolio.errors.full_messages.join(', ')}")
       redirect_to @portfolio, alert: "Portfolio could not be deleted."
