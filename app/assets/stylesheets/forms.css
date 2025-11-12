@@ -1,11 +1,15 @@
 .new-transaction-form,
-.new-portfolio-form {
+.new-portfolio-form,
+.login-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: auto;
     gap: 10px;
+    padding: 2rem;
+    border-radius: 1rem;
+    font-size: large;
 }
 
 .form-section {
