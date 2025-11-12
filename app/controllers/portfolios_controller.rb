@@ -7,10 +7,10 @@ class PortfoliosController < ApplicationController
     log_info("Portfolio index accessed with params: #{params.inspect}")
     if params[:name] && !params[:name].strip.empty?
       normalise_name = params[:name].upcase.strip
-      @portfolios = Portfolio.search_by_portfolio_name(normalise_name).order_by_column(params[:sort_by], params[:dir])
+      @portfolios = current_user.portfolios.search_by_portfolio_name(normalise_name).order_by_column(params[:sort_by], params[:dir])
       log_info("Searched portfolios by name: #{normalise_name}")
     else
-      @portfolios = Portfolio.all.order_by_column(params[:sort_by], params[:dir])
+      @portfolios = current_user.portfolios.all.order_by_column(params[:sort_by], params[:dir])
       log_info("Fetched all portfolios")
       log_info("Sorted portfolios by #{params[:sort_by]}")
     end
@@ -31,7 +31,7 @@ class PortfoliosController < ApplicationController
   end
 
   def create
-    @portfolio = Portfolio.new(portfolio_params)
+    @portfolio = current_user.portfolios.new(portfolio_params)
     log_info("Portfolio Params: #{portfolio_params.inspect}")
 
     if @portfolio.save
@@ -75,7 +75,7 @@ class PortfoliosController < ApplicationController
   private
 
     def set_portfolio
-      @portfolio = Portfolio.find(params[:id])
+      @portfolio = current_user.portfolios.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       log_error("Portfolio not found with id: #{params[:id]}")
       redirect_to portfolios_path, alert: 'Portfolio not found.'

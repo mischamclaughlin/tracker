@@ -7,10 +7,10 @@ class TransactionsController < ApplicationController
     log_info("Transaction index accessed with params: #{params.inspect}")
     if params[:name] && !params[:name].strip.empty?
       normalise_name = params[:name].upcase.strip
-      @transactions = Transaction.includes(:coin, :portfolio).search(normalise_name).order_by_column(params[:sort_by], params[:dir])
+      @transactions = current_user.transactions.includes(:coin, :portfolio).search(normalise_name).order_by_column(params[:sort_by], params[:dir])
       log_info("Searched transactions by asset: #{normalise_name}")
     else
-      @transactions = Transaction.all.order_by_column(params[:sort_by], params[:dir])
+      @transactions = current_user.transactions.all.order_by_column(params[:sort_by], params[:dir])
       log_info("Fetched all transactions")
       log_info("Sorted transactions by #{params[:sort_by]}")
     end
@@ -70,7 +70,7 @@ class TransactionsController < ApplicationController
   private
 
   def set_transaction
-    @transaction = Transaction.find(params[:id])
+    @transaction = current_user.transactions.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     log_error("Transaction with ID #{params[:id]} not found.")
     redirect_to transactions_path, alert: 'Transaction not found.'
