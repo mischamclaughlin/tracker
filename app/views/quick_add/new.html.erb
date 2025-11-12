@@ -1,0 +1,22 @@
+<h1 class="page-title">Create</h1>
+
+<div class="quick-choose-container">
+	<div class="quick-form-container ">
+		<h3>Portfolio</h3>
+		<turbo-frame id="new-portfolio">
+			<%= render 'portfolios/form', portfolio: @portfolio %>
+		</turbo-frame>
+	</div>
+
+	<div class="quick-form-container ">
+		<h3>Transaction</h3>
+		<turbo-frame id="new-transaction">
+			<%= render 'transactions/form', transaction: @transaction %>
+		</turbo-frame>
+	</div>
+</div>
+
+<div class="btns">
+  <%= link_to "New Portfolio", new_portfolio_path, class: "btn" %>
+  <%= link_to "New Transaction", new_transaction_path, class: "btn" %>
+</div>

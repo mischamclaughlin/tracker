@@ -1,0 +1,13 @@
+.quick-choose-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 960px;
+    padding: 1rem;
+    gap: 2rem;
+}
+
+.quick-choose-container.new-portfolio,
+.quick-choose-container.new-transaction {
+    width: 100%;
+}
