@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_11_153819) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_12_124406) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -43,6 +43,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_11_153819) do
     t.decimal "profit_loss", precision: 30, scale: 2, default: "0.0", null: false
     t.decimal "profit_loss_percentage", precision: 10, scale: 2, default: "0.0", null: false
     t.bigint "user_id"
+    t.index ["user_id", "portfolio_name"], name: "index_portfolios_on_user_id_and_portfolio_name", unique: true
     t.index ["user_id"], name: "index_portfolios_on_user_id"
   end
 
@@ -76,6 +77,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_11_153819) do
     t.string "last_name"
     t.string "username", default: "", null: false
     t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
