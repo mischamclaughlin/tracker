@@ -1,16 +1,31 @@
 <h2>Forgot your password?</h2>
 
 <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <div class="signup-form glass">
+    <% if resource.errors.any? %>
+      <div style="color: red">
+        <h2><%= pluralize(resource.errors.count, "error") %> prohibited this resource from being saved:</h2>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+        <ul>
+          <% resource.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
+    <div class="form-section">
+      <%= f.label :email, 'Email:' %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    </div>
+
+    <div class="form-section form-btn">
+      <%= f.submit "Send me reset password instructions", class: "btn" %>
+    </div>
   </div>
 <% end %>
 
-<%= render "devise/shared/links" %>
+<div class="btns">
+  <%= link_to "Log in", new_session_path(resource_name), class: "btn" %>
+  <%= link_to "Sign up", new_registration_path(resource_name), class: "btn" %>
+</div>
