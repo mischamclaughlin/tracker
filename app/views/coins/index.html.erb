@@ -13,7 +13,7 @@
  <div class="btns">
   <p>Sort by:</p>
   <%= link_to 'Symbol', coins_path(asset: params[:asset], sort_by: 'symbol', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'symbol'}" %>
-  <%= link_to 'Coin', coins_path(asset: params[:asset], sort_by: 'coin_name', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'coin_name'}" %>
+  <%= link_to 'Name', coins_path(asset: params[:asset], sort_by: 'coin_name', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'coin_name'}" %>
   <%= link_to 'Fiat', coins_path(asset: params[:asset], sort_by: 'fiat_balance', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'fiat_balance'}" %>
   <%= link_to 'Coin', coins_path(asset: params[:asset], sort_by: 'coin_balance', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'coin_balance'}" %>
   <%= link_to 'Price', coins_path(asset: params[:asset], sort_by: 'latest_price', dir: params[:dir]), class: "btn #{'active' if params[:sort_by] == 'latest_price'}" %>
