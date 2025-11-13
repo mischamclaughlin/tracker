@@ -1,13 +1,14 @@
 class CoingeckoService
   include HTTParty
-  base_uri 'https://api.coingecko.com/api/v3'
+
+  base_uri "https://api.coingecko.com/api/v3"
 
   def self.fetch_current_price(coingecko_id)
-    response = get('/simple/price', query: {
+    response = get("/simple/price", query: {
       ids: coingecko_id,
-      vs_currencies: 'usd'
+      vs_currencies: "usd"
     })
-    response.dig(coingecko_id, 'usd')
+    response.dig(coingecko_id, "usd")
   rescue => e
     Rails.logger.error("Error fetching current price for #{coingecko_id}: #{e.message}")
     nil
@@ -28,12 +29,12 @@ class CoingeckoService
     to_timestamp = (time + 1.hour).to_i
 
     response = get("/coins/#{coingecko_id}/market_chart/range", query: {
-      vs_currency: 'usd',
+      vs_currency: "usd",
       from: from_timestamp,
       to: to_timestamp
     })
 
-    prices = response['prices']
+    prices = response["prices"]
     return nil if prices.blank?
 
     closest = prices.min_by { |ts, _| (ts / 1000 - time.to_i).abs }
@@ -44,14 +45,15 @@ class CoingeckoService
   end
 
   def self.fetch_from_history(coingecko_id, time)
-    date_str = time.strftime('%d-%m-%Y')
+    date_str = time.strftime("%d-%m
+    -%Y")
 
     response = get("/coins/#{coingecko_id}/history", query: {
       date: date_str,
-      localization: 'false'
+      localization: "false"
     })
 
-    response.dig('market_data', 'current_price', 'usd')
+    response.dig("market_data", "current_price", "usd")
   rescue => e
     Rails.logger.error("Error fetching historical price (history) for #{coingecko_id}: #{e.message}")
     nil

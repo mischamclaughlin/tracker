@@ -1,7 +1,7 @@
 class TransactionsController < ApplicationController
   include SortParamGuard
 
-  before_action :set_transaction, only: [:show, :edit, :update, :destroy]
+  before_action :set_transaction, only: [ :show, :edit, :update, :destroy ]
 
   def index
     log_info("Transaction index accessed with params: #{params.inspect}")
@@ -15,12 +15,12 @@ class TransactionsController < ApplicationController
       log_info("Sorted transactions by #{params[:sort_by]}")
     end
   end
-  
+
   def show
     log_info("Viewing transaction with ID #{@transaction.id}")
   rescue ActiveRecord::RecordNotFound
     log_error("Transaction not found with id: #{params[:id]}")
-    redirect_to transactions_path, alert: 'Transaction not found.'
+    redirect_to transactions_path, alert: "Transaction not found."
   end
 
   def new
@@ -32,6 +32,8 @@ class TransactionsController < ApplicationController
   end
 
   def edit
+    log_info("Transaction Params for edit: #{params.inspect}")
+    @transaction.coin_identifier = @transaction.coin.symbol
   end
 
   def create
@@ -54,7 +56,7 @@ class TransactionsController < ApplicationController
   def update
     if @transaction.update(transaction_params)
       log_info("Updated transaction with ID #{@transaction.id}")
-      redirect_to @transaction, notice: 'Transaction was successfully updated.'
+      redirect_to @transaction, notice: "Transaction was successfully updated."
     else
       log_error("Failed to update transaction with ID #{@transaction.id}: #{@transaction.errors.full_messages.join(', ')}")
       render :edit, status: :unprocessable_entity
@@ -64,10 +66,10 @@ class TransactionsController < ApplicationController
   def destroy
     if @transaction.destroy
       log_info("Deleted transaction with ID #{@transaction.id}")
-      redirect_to transactions_path, notice: 'Transaction was successfully destroyed.', status: :see_other
+      redirect_to transactions_path, notice: "Transaction was successfully destroyed.", status: :see_other
     else
       log_error("Failed to delete transaction with ID #{@transaction.id}: #{@transaction.errors.full_messages.join(', ')}")
-      redirect_to @transaction, alert: 'Transaction could not be deleted.'
+      redirect_to @transaction, alert: "Transaction could not be deleted."
     end
   end
 
@@ -77,10 +79,10 @@ class TransactionsController < ApplicationController
     @transaction = current_user.transactions.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     log_error("Transaction with ID #{params[:id]} not found.")
-    redirect_to transactions_path, alert: 'Transaction not found.'
+    redirect_to transactions_path, alert: "Transaction not found."
   end
 
   def transaction_params
-    params.require(:transaction).permit(:coin_identifier, :portfolio_identifier, :action, :time, :memo, :fiat_amount, :coin_amount)
+    params.require(:transaction).permit(:coin_id, :coin_identifier, :portfolio_identifier, :action, :time, :memo, :fiat_amount, :coin_amount)
   end
 end

@@ -6,9 +6,9 @@ class Coin < ApplicationRecord
   ALLOWED_COLUMNS = %w[symbol coin_name fiat_balance coin_balance latest_price].freeze unless const_defined?(:ALLOWED_COLUMNS)
   ALPHA_COLS = %w[symbol coin_name].freeze unless const_defined?(:ALPHA_COLS)
 
-  has_many :transactions, foreign_key: 'coin_id', class_name: 'Transaction'
-  has_many :holdings, foreign_key: 'coin_id', class_name: 'Holding'
-  has_many :prices, foreign_key: 'coin_id', class_name: 'Price'
+  has_many :transactions, foreign_key: "coin_id", class_name: "Transaction"
+  has_many :holdings, foreign_key: "coin_id", class_name: "Holding"
+  has_many :prices, foreign_key: "coin_id", class_name: "Price"
 
   validates :coin_name, presence: true, uniqueness: true
   validates :symbol, presence: true, uniqueness: true
@@ -26,12 +26,12 @@ class Coin < ApplicationRecord
 
   def self.find_by_symbol_or_name(identifier)
     key = identifier.downcase
-    where('LOWER(symbol) = ? OR LOWER(coin_name) = ?', key, key).first
+    where("LOWER(symbol) = ? OR LOWER(coin_name) = ?", key, key).first
   end
 
   def self.search(identifier)
     key = identifier.to_s.downcase
-    where('LOWER(symbol) LIKE ? OR LOWER(coin_name) LIKE ?', "%#{key}%", "%#{key}%")
+    where("LOWER(symbol) LIKE ? OR LOWER(coin_name) LIKE ?", "%#{key}%", "%#{key}%")
   end
 
   def update_coin_metrics!
