@@ -1,29 +1,41 @@
 <h2>Sign up</h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <div class="signup-form glass">
+    <% if resource.errors.any? %>
+      <div style="color: red">
+        <h2><%= pluralize(resource.errors.count, "error") %> prohibited this resource from being saved:</h2>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+        <ul>
+          <% resource.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-    <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
+    <div class="form-section">
+      <%= f.label :email, 'Email:' %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+    <div class="form-section">
+      <%= f.label :password, 'Password:' %>
+      <%= f.password_field :password, autocomplete: "new-password" %>
+    </div>
 
-  <div class="actions">
-    <%= f.submit "Sign up" %>
+    <div class="form-section">
+      <%= f.label :password_confirmation, 'Password confirmation:' %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+    </div>
+
+    <div class="form-section form-btn">
+      <%= f.submit "Sign up", class: "btn" %>
+    </div>
   </div>
 <% end %>
 
-<%= render "devise/shared/links" %>
+<div class="btns">
+  <%= link_to "Log in", new_session_path(resource_name), class: "btn" %>
+  <%= link_to "Forgotten Password?", new_password_path(resource_name), class: "btn" %>
+</div>
