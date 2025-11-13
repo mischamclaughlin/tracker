@@ -26,3 +26,5 @@
 <% else %>
   <%= display_transactions(@transactions) %>
 <% end %>
+
+<%= link_to "New Transaction", new_transaction_path, class: "btn" %>
