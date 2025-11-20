@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :holdings
-  resources :coins
+  resources :coins do
+    get :chart_data, on: :member
+  end
   resources :portfolios
   resources :transactions
 

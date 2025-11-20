@@ -1,10 +1,18 @@
-<p style="color: green"><%= notice %></p>
+<h1 class="page-title"><%= @coin.coin_name %> (<%= @coin.symbol %>)</h1>
 
-<%= render @coin %>
+<div
+  data-controller="price-chart"
+  data-price-chart-coin-id-value="<%= @coin.id %>"
+  data-price-chart-range-value="90d"
+  class="chart-container"
+>
+  <div class="btns">
+    <button class="btn" data-action="click->price-chart#setRange" data-price-chart-range-param="24h">24h</button>
+    <button class="btn" data-action="click->price-chart#setRange" data-price-chart-range-param="7d">7d</button>
+    <button class="btn" data-action="click->price-chart#setRange" data-price-chart-range-param="30d">30d</button>
+    <button class="btn" data-action="click->price-chart#setRange" data-price-chart-range-param="90d">90d</button>
+    <button class="btn" data-action="click->price-chart#setRange" data-price-chart-range-param="1y">1y</button>
+  </div>
 
-<div>
-  <%= link_to "Edit this coin", edit_coin_path(@coin) %> |
-  <%= link_to "Back to coins", coins_path %>
-
-  <%= button_to "Destroy this coin", @coin, method: :delete %>
+  <canvas data-price-chart-target="canvas" width="900" height="360"></canvas>
 </div>

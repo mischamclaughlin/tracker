@@ -119,10 +119,16 @@ class Transaction < ApplicationRecord
       log_info("Price data exists for Coin ID: #{coin_id} at Time: #{time}")
     else
       log_error("Price data missing for Coin ID: #{coin_id} at Time: #{time}")
+      # Enqueue a small window backfill so subsequent requests have data locally
+      BackfillPricesJob.perform_later(coin_id, (time - 1.day), (time + 1.day))
+
+      # Fallback: fetch a single price now and upsert to avoid unique constraint races
       historical_price = CoingeckoService.fetch_historical_price(coin.coingecko_id, time)
       if historical_price
-        Price.create!(coin_id: coin_id, price: historical_price, recorded_at: time)
-        log_info("Fetched and stored historical price for Coin ID: #{coin_id} at Time: #{time}")
+        Price.upsert_all([
+          { coin_id: coin_id, price: historical_price, recorded_at: time }
+        ], unique_by: :index_prices_on_coin_id_and_recorded_at)
+        log_info("Fetched and upserted historical price for Coin ID: #{coin_id} at Time: #{time}")
       else
         errors.add(:time, "No price data available for the specified time: #{time}")
         log_error("Failed to fetch historical price for Coin ID: #{coin_id} at Time: #{time}")

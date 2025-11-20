@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_12_124406) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_14_000000) do
   create_table "coins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -53,6 +53,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_12_124406) do
     t.bigint "coin_id"
     t.decimal "price", precision: 30, scale: 2
     t.datetime "recorded_at"
+    t.index ["coin_id", "recorded_at"], name: "index_prices_on_coin_id_and_recorded_at", unique: true
     t.index ["coin_id"], name: "index_prices_on_coin_id"
   end
 
