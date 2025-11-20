@@ -1,5 +1,5 @@
 class Price < ApplicationRecord
-  belongs_to :coin, foreign_key: :coin_id, class_name: 'Coin'
+  belongs_to :coin, foreign_key: :coin_id, class_name: "Coin"
 
   validates :coin_id, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
@@ -23,7 +23,7 @@ class Price < ApplicationRecord
 
   def self.price_for_coin_exists?(coin_id, recorded)
     return false if coin_id.blank? || recorded.blank?
-    where(coin_id: coin_id).where('recorded_at <= ?', recorded).exists?
+    where(coin_id: coin_id).where("recorded_at <= ?", recorded).exists?
   end
 
   private
