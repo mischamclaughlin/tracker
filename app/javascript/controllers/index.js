@@ -1,4 +1,5 @@
-// Import and register all your controllers from the importmap via controllers/**/*_controller
+// Register controllers explicitly to avoid dynamic import issues with eager loader
 import { application } from "controllers/application"
-import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
-eagerLoadControllersFrom("controllers", application)
+import PriceChartController from "controllers/price_chart_controller"
+
+application.register("price-chart", PriceChartController)
