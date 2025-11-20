@@ -2,6 +2,7 @@ class CoinsController < ApplicationController
   include SortParamGuard
 
   before_action :set_coin, only: %i[ show edit update destroy ]
+  before_action :set_coin_for_chart, only: %i[ chart_data ]
 
   def index
     log_info("Coin index accessed with params: #{params.inspect}")
@@ -20,7 +21,7 @@ class CoinsController < ApplicationController
     log_info("Fetched coin: #{@coin.id}")
   rescue ActiveRecord::RecordNotFound
     log_error("Coin not found with id: #{params[:id]}")
-    redirect_to coins_path, alert: 'Coin not found.'
+    redirect_to coins_path, alert: "Coin not found."
   end
 
   def new
@@ -63,8 +64,31 @@ class CoinsController < ApplicationController
     end
   end
 
+  def chart_data
+    to = Time.current
+    from = case params[:range]
+    when "24h" then to - 24.hours
+    when "7d"  then to - 7.days
+    when "30d" then to - 30.days
+    when "90d" then to - 90.days
+    else
+             to - 1.year
+    end
+
+    series = Price.where(coin_id: @coin.id, recorded_at: from..to)
+                  .order(:recorded_at)
+                  .pluck(:recorded_at, :price)
+
+    render json: series.map { |t, p| { x: t.iso8601, y: p.to_f } }
+  end
+
   private
+
     def set_coin
+      @coin = Coin.find(params[:id])
+    end
+
+    def set_coin_for_chart
       @coin = Coin.find(params[:id])
     end
 
