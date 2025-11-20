@@ -5,3 +5,19 @@
     padding: 0.5rem;
     gap: 0.5rem;
 }
+
+.search-bar {
+    width: 20vw;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    border: solid 2px #c05000;
+    background: #c050001a;
+    color: white;
+    font-family: "JetBrains Mono", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+.search-field .btn {
+    font-family: "JetBrains Mono", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
