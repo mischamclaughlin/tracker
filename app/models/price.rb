@@ -23,9 +23,7 @@ class Price < ApplicationRecord
 
   def self.price_for_coin_exists?(coin_id, recorded)
     return false if coin_id.blank? || recorded.blank?
-
-    return true if where('coin_id = ?', coin_id).first&.recorded_at <= recorded
-    false
+    where(coin_id: coin_id).where('recorded_at <= ?', recorded).exists?
   end
 
   private
